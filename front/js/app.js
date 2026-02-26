@@ -6,6 +6,7 @@ class App {
         this.api = new ApiService();
         this.renderer = new ViewRenderer('gridContainer');
         this.currentUid = null;
+        this.lastTurnN = 0;
 
         this.initEventListeners();
     }
@@ -13,6 +14,11 @@ class App {
     initEventListeners() {
         document.getElementById('addUnitBtn').addEventListener('click', () => this.addUnit());
         document.getElementById('refreshBtn').addEventListener('click', () => this.refreshData());
+        
+        document.getElementById('moveBtn').addEventListener('click', () => this.sendAction(1));
+        document.getElementById('rotateLeftBtn').addEventListener('click', () => this.sendAction(2, { angle: -90 }));
+        document.getElementById('rotateRightBtn').addEventListener('click', () => this.sendAction(2, { angle: 90 }));
+        document.getElementById('biteBtn').addEventListener('click', () => this.sendAction(3));
     }
 
     async addUnit() {
@@ -41,11 +47,30 @@ class App {
                 this.api.getMemory(this.currentUid)
             ]);
 
+            this.lastTurnN = feelData.turnN;
             this.renderer.renderStatus('status', feelData);
             this.renderer.renderGrid(watchData.viewMap);
             this.renderer.renderMemory('memoryLog', memData.memory);
         } catch (error) {
             console.error('Ошибка при обновлении данных:', error);
+        }
+    }
+
+    async sendAction(actionId, payload = {}) {
+        if (!this.currentUid) return alert('Сначала создайте жука');
+
+        try {
+            const result = await this.api.sendAction(this.currentUid, {
+                initTourN: this.lastTurnN,
+                actionId,
+                payload
+            });
+            console.log('Action queued:', result);
+            // Автоматически обновляем данные через небольшую паузу, 
+            // чтобы сервер успел обработать ход (в реальности зависит от тика движка)
+            setTimeout(() => this.refreshData(), 500);
+        } catch (error) {
+            alert('Ошибка отправки действия: ' + error.message);
         }
     }
 }
