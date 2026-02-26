@@ -62,15 +62,19 @@ class App {
         if (!this.currentUid) return;
 
         try {
-            const [watchData, feelData, memData] = await Promise.all([
+            const [watchData, feelData, memData, unitsData] = await Promise.all([
                 this.api.getWatch(this.currentUid),
                 this.api.getFeel(this.currentUid),
-                this.api.getMemory(this.currentUid)
+                this.api.getMemory(this.currentUid),
+                this.api.getAllUnits()
             ]);
+
+            const currentUnit = unitsData.units.find(u => u.uid === this.currentUid);
 
             this.lastTurnN = feelData.turnN;
             this.renderer.renderStatus('status', feelData);
             this.renderer.renderGrid(watchData.viewMap);
+            this.renderer.renderUnitParams('unitParams', currentUnit);
             this.renderer.renderMemory('memoryLog', memData.memory);
         } catch (error) {
             console.error('Ошибка при обновлении данных:', error);

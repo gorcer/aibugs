@@ -44,6 +44,35 @@ export class ViewRenderer {
         container.appendChild(table);
     }
 
+    renderUnitParams(containerId, unit) {
+        const container = document.getElementById(containerId);
+        if (!unit) {
+            container.innerHTML = 'Данные отсутствуют';
+            return;
+        }
+
+        const list = document.createElement('ul');
+        list.style.listStyle = 'none';
+        list.style.padding = '0';
+
+        const params = {
+            'Имя': unit.name,
+            'Координаты': `X: ${unit.x}, Y: ${unit.y}`,
+            'Угол': unit.angle,
+            'Жив': unit.is_live ? 'Да' : 'Нет',
+            'Здоровье': unit.current_health,
+            'Энергия': unit.current_energy
+        };
+
+        for (const [label, value] of Object.entries(params)) {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${label}:</strong> ${value}`;
+            list.appendChild(li);
+        }
+        container.innerHTML = '';
+        container.appendChild(list);
+    }
+
     renderGrid(viewMap) {
         if (!viewMap || viewMap.length === 0) {
             this.container.innerHTML = 'Нет данных о зрении';
