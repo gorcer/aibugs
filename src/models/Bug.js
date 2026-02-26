@@ -1,8 +1,8 @@
-const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
 
 class Bug {
     constructor(name, x, y, angle = 0) {
-        this.uid = uuidv4();
+        this.uid = crypto.randomUUID();
         this.name = name;
         this.x = x;
         this.y = y;
