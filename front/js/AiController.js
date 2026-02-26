@@ -157,6 +157,11 @@ ${JSON.stringify(memory, null, 2)}
 
             this.log(`LLM решила: ${content} (Cost: $${cost.toFixed(6)})`);
 
+            if (decision.actionId === 0) {
+                this.log("Действие IDLE (0): пропуск отправки на бэкенд.");
+                return;
+            }
+
             await this.api.sendAction(this.currentUid, {
                 initTourN: this.lastTurnN,
                 actionId: decision.actionId,
