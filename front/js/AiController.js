@@ -36,7 +36,8 @@ class AiController {
             body: JSON.stringify({
                 "model": model,
                 "messages": [{"role": "user", "content": "test"}],
-                "max_tokens": 1
+                "max_tokens": 1,
+                "response_format": { "type": "json_object" }
             })
         });
 
