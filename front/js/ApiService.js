@@ -27,6 +27,11 @@ export class ApiService {
         return res.json();
     }
 
+    async getAllUnits() {
+        const res = await fetch(`${this.baseUrl}/units`);
+        return res.json();
+    }
+
     async sendAction(uid, actionData) {
         const res = await fetch(`${this.baseUrl}/action/${uid}`, {
             method: 'POST',

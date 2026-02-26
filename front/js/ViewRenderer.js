@@ -3,6 +3,40 @@ export class ViewRenderer {
         this.container = document.getElementById(containerId);
     }
 
+    renderWorldMap(units, onUnitClick) {
+        if (!units || units.length === 0) {
+            document.getElementById('worldMapContainer').innerHTML = 'Мир пуст';
+            return;
+        }
+
+        const container = document.getElementById('worldMapContainer');
+        container.innerHTML = '';
+
+        const minX = Math.min(...units.map(u => u.x), 0);
+        const maxX = Math.max(...units.map(u => u.x), 20);
+        const minY = Math.min(...units.map(u => u.y), 0);
+        const maxY = Math.max(...units.map(u => u.y), 20);
+
+        const table = document.createElement('table');
+        for (let y = minY; y <= maxY; y++) {
+            const tr = document.createElement('tr');
+            for (let x = minX; x <= maxX; x++) {
+                const td = document.createElement('td');
+                const unit = units.find(u => u.x === x && u.y === y);
+                if (unit) {
+                    td.className = 'type-2';
+                    td.style.cursor = 'pointer';
+                    td.innerText = 'B';
+                    td.title = `${unit.name} (HP: ${unit.current_health})`;
+                    td.onclick = () => onUnitClick(unit.uid);
+                }
+                tr.appendChild(td);
+            }
+            table.appendChild(tr);
+        }
+        container.appendChild(table);
+    }
+
     renderGrid(viewMap) {
         if (!viewMap || viewMap.length === 0) {
             this.container.innerHTML = 'Нет данных о зрении';

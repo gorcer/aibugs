@@ -9,6 +9,27 @@ class App {
         this.lastTurnN = 0;
 
         this.initEventListeners();
+        this.startWorldPolling();
+    }
+
+    startWorldPolling() {
+        setInterval(() => this.refreshWorldMap(), 2000);
+        this.refreshWorldMap();
+    }
+
+    async refreshWorldMap() {
+        try {
+            const data = await this.api.getAllUnits();
+            this.renderer.renderWorldMap(data.units, (uid) => this.selectUnit(uid));
+        } catch (e) {
+            console.error('World map error', e);
+        }
+    }
+
+    selectUnit(uid) {
+        this.currentUid = uid;
+        document.getElementById('currentUid').innerText = uid;
+        this.refreshData();
     }
 
     initEventListeners() {
