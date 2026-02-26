@@ -7,6 +7,7 @@ class AiController {
         this.currentUid = null;
         this.lastTurnN = 0;
         this.totalCost = 0;
+        this.isProcessing = false;
         
         this.logElement = document.getElementById('log');
         this.startBtn = document.getElementById('startBtn');
@@ -91,13 +92,24 @@ class AiController {
         this.socket = new WebSocket(wsUrl);
 
         this.socket.onmessage = async (event) => {
+            if (this.isProcessing) {
+                console.log('Пропуск хода: предыдущий запрос к LLM еще выполняется');
+                return;
+            }
+
             const memory = JSON.parse(event.data);
             const lastState = memory[memory.length - 1];
             if (!lastState) return;
 
             this.lastTurnN = lastState.turnN;
             this.log(`Ход ${lastState.turnN}. Анализ памяти (${memory.length} зап.). Запрос к LLM...`);
-            await this.getLlmDecision(memory);
+            
+            this.isProcessing = true;
+            try {
+                await this.getLlmDecision(memory);
+            } finally {
+                this.isProcessing = false;
+            }
         };
     }
 
