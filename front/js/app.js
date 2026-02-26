@@ -104,6 +104,10 @@ class App {
         };
 
         const result = await this.api.addUnit(data);
+        if (result.error) {
+            alert(`Ошибка создания жука: ${result.error}`);
+            return;
+        }
         if (result.uid) {
             this.currentUid = result.uid;
             document.getElementById('currentUid').innerText = this.currentUid;

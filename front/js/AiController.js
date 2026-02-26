@@ -66,6 +66,9 @@ class AiController {
             };
 
             const result = await this.api.addUnit(bugData);
+            if (result.error) {
+                throw new Error(result.error);
+            }
             this.currentUid = result.uid;
             document.getElementById('uid').innerText = this.currentUid;
             document.getElementById('status').innerText = 'Активен';
