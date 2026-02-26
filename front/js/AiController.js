@@ -21,14 +21,43 @@ class AiController {
         this.logElement.scrollTop = this.logElement.scrollHeight;
     }
 
+    async checkModelAvailability() {
+        const apiKey = document.getElementById('apiKey').value;
+        const model = document.getElementById('model').value;
+
+        this.log(`Проверка доступности модели ${model}...`);
+        
+        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "model": model,
+                "messages": [{"role": "user", "content": "test"}],
+                "max_tokens": 1
+            })
+        });
+
+        const result = await response.json();
+        if (result.error) {
+            throw new Error(result.error.message || "Ошибка проверки модели");
+        }
+        this.log("Модель доступна.");
+        return true;
+    }
+
     async start() {
         const apiKey = document.getElementById('apiKey').value;
         if (!apiKey) return alert('Введите API Key');
 
         this.startBtn.disabled = true;
-        this.log('Запуск жука...');
+        this.log('Запуск процесса...');
 
         try {
+            await this.checkModelAvailability();
+
             const bugData = {
                 name: document.getElementById('name').value,
                 x: parseInt(document.getElementById('x').value),
@@ -45,7 +74,9 @@ class AiController {
             this.connectWebSocket(this.currentUid);
             this.log(`Жук создан. UID: ${this.currentUid}`);
         } catch (e) {
-            this.log(`Ошибка: ${e.message}`);
+            this.log(`Критическая ошибка: ${e.message}`);
+            document.getElementById('status').innerText = 'Ошибка запуска';
+            document.getElementById('status').className = '';
             this.startBtn.disabled = false;
         }
     }
@@ -92,6 +123,10 @@ class AiController {
 
             const result = await response.json();
             
+            if (result.error) {
+                throw new Error(`OpenRouter Error: ${result.error.message}`);
+            }
+
             if (result.cost) {
                 this.totalCost += result.cost;
                 document.getElementById('totalCost').innerText = this.totalCost.toFixed(6);
