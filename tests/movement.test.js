@@ -3,6 +3,7 @@ const express = require('express');
 const gameRoutes = require('../src/routes/gameRoutes');
 const world = require('../src/models/World');
 const gameEngine = require('../src/services/GameEngine');
+const ACTIONS = require('../src/constants/Actions');
 
 const app = express();
 app.use(express.json());
