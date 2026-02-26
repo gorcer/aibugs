@@ -31,12 +31,12 @@
         <option value="180">180 (Влево)</option>
         <option value="270">270 (Вверх)</option>
     </select><br><br>
-    <button onclick="addUnit()">Создать</button>
+    <button id="addUnitBtn">Создать</button>
 
     <hr>
     <h3>Управление</h3>
     <p>UID: <span id="currentUid">нет</span></p>
-    <button onclick="refreshData()">Обновить данные</button>
+    <button id="refreshBtn">Обновить данные</button>
     <div id="status"></div>
 </div>
 
@@ -50,98 +50,6 @@
     <div id="memoryLog"></div>
 </div>
 
-<script>
-    let currentUid = null;
-    const API_BASE = '/api';
-
-    async function addUnit() {
-        const data = {
-            name: document.getElementById('name').value,
-            x: parseInt(document.getElementById('x').value),
-            y: parseInt(document.getElementById('y').value),
-            angle: parseInt(document.getElementById('angle').value)
-        };
-
-        const res = await fetch(`${API_BASE}/addUnit`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        });
-        const result = await res.json();
-        if (result.uid) {
-            currentUid = result.uid;
-            document.getElementById('currentUid').innerText = currentUid;
-            refreshData();
-        }
-    }
-
-    async function refreshData() {
-        if (!currentUid) return;
-        
-        // Получаем зрение
-        const watchRes = await fetch(`${API_BASE}/watch/${currentUid}`);
-        const watchData = await watchRes.json();
-        
-        // Получаем ощущения
-        const feelRes = await fetch(`${API_BASE}/feel/${currentUid}`);
-        const feelData = await feelRes.json();
-
-        // Получаем память
-        const memRes = await fetch(`${API_BASE}/memory/${currentUid}`);
-        const memData = await memRes.json();
-
-        renderStatus(feelData);
-        renderGrid(watchData.viewMap);
-        renderMemory(memData.memory);
-    }
-
-    function renderStatus(data) {
-        const container = document.getElementById('status');
-        container.innerHTML = `<h4>Ход: ${data.turnN}</h4>`;
-        data.feeling.forEach(f => {
-            container.innerHTML += `<p>${JSON.stringify(f)}</p>`;
-        });
-    }
-
-    function renderGrid(viewMap) {
-        if (!viewMap || viewMap.length === 0) return;
-        
-        const container = document.getElementById('gridContainer');
-        container.innerHTML = '';
-        
-        // Находим границы для отрисовки таблицы
-        const minX = Math.min(...viewMap.map(c => c.x));
-        const maxX = Math.max(...viewMap.map(c => c.x));
-        const minY = Math.min(...viewMap.map(c => c.y));
-        const maxY = Math.max(...viewMap.map(c => c.y));
-
-        const table = document.createElement('table');
-        for (let y = minY; y <= maxY; y++) {
-            const tr = document.createElement('tr');
-            for (let x = minX; x <= maxX; x++) {
-                const td = document.createElement('td');
-                const cell = viewMap.find(c => c.x === x && c.y === y);
-                if (cell) {
-                    td.className = `type-${cell.type}`;
-                    td.title = `X:${x} Y:${y}`;
-                    td.innerText = cell.type === 1 ? 'F' : (cell.type === 2 ? 'B' : '');
-                }
-                tr.appendChild(td);
-            }
-            table.appendChild(tr);
-        }
-        container.appendChild(table);
-    }
-
-    function renderMemory(memory) {
-        const container = document.getElementById('memoryLog');
-        container.innerHTML = '';
-        memory.reverse().forEach(entry => {
-            const item = document.createElement('div');
-            item.innerHTML = `<strong>Ход ${entry.turnN}</strong><pre>${JSON.stringify(entry.feeling, null, 2)}</pre>`;
-            container.appendChild(item);
-        });
-    }
-</script>
+<script type="module" src="js/app.js"></script>
 </body>
 </html>
