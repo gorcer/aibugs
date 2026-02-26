@@ -20,7 +20,12 @@ class App {
     async refreshWorldMap() {
         try {
             const data = await this.api.getAllUnits();
-            this.renderer.renderWorldMap(data.units, data.food, (uid) => this.selectUnit(uid));
+            this.renderer.renderWorldMap(
+                data.units, 
+                data.food, 
+                (uid) => this.selectUnit(uid),
+                (x, y) => this.setCoordinates(x, y)
+            );
         } catch (e) {
             console.error('World map error', e);
         }
@@ -30,6 +35,11 @@ class App {
         this.currentUid = uid;
         document.getElementById('currentUid').innerText = uid;
         this.refreshData();
+    }
+
+    setCoordinates(x, y) {
+        document.getElementById('x').value = x;
+        document.getElementById('y').value = y;
     }
 
     initEventListeners() {

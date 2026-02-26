@@ -3,7 +3,7 @@ export class ViewRenderer {
         this.container = document.getElementById(containerId);
     }
 
-    renderWorldMap(units, food, onUnitClick) {
+    renderWorldMap(units, food, onUnitClick, onEmptyClick) {
         const hasUnits = units && units.length > 0;
         const hasFood = food && food.length > 0;
 
@@ -43,6 +43,9 @@ export class ViewRenderer {
                     td.className = 'type-1';
                     td.innerText = 'F';
                     td.title = `Food: ${foodItem.amount}`;
+                } else {
+                    td.style.cursor = 'crosshair';
+                    td.onclick = () => onEmptyClick(x, y);
                 }
                 tr.appendChild(td);
             }
