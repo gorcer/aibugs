@@ -88,15 +88,15 @@
 {
   "turnN": 42,
   "feeling": [
-    {"energy": "normal"},
-    {"health": "high"},
+    {"energy": 100},
+    {"health": 100},
     {"pain": 90},
     {"currentAction": 1}
   ]
 }
 ```
 * `pain`: угол (относительно направления жука), с которого пришла боль.
-* `energy`/`health`: `low`, `normal`, `high`.
+* `energy`/`health`: числовые значения текущих показателей.
 
 ---
 

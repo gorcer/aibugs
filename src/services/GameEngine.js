@@ -107,14 +107,9 @@ class GameEngine {
 
     calculateFeelings(bug) {
         const feelings = [];
-        const energyPercent = (bug.current_energy / bug.max_energy) * 100;
         
-        let energyStatus = 'normal';
-        if (energyPercent <= bug.energy_low_amount) energyStatus = 'low';
-        if (energyPercent >= bug.energy_high_amount) energyStatus = 'high';
-        
-        feelings.push({ energy: energyStatus });
-        feelings.push({ health: bug.current_health > 70 ? 'high' : (bug.current_health < 30 ? 'low' : 'normal') });
+        feelings.push({ energy: bug.current_energy });
+        feelings.push({ health: bug.current_health });
         
         if (bug.lastPainAngle !== undefined) {
             feelings.push({ pain: bug.lastPainAngle });
