@@ -80,6 +80,8 @@ describe('AiBugs API Tests', () => {
         const attackerBug = world.bugs.get(attackerUid);
         const victimBug = world.bugs.get(victimUid);
 
+        // Уменьшаем энергию, чтобы увидеть прирост после укуса
+        attackerBug.current_energy = 5000;
         const initialAttackerEnergy = attackerBug.current_energy;
         const initialVictimHealth = victimBug.current_health;
         const initialVictimWeight = victimBug.weight;
