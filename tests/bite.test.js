@@ -70,10 +70,8 @@ describe('AiBugs Bite Interaction Tests', () => {
             .post(`/api/action/${attackerUid}`)
             .send({ initTourN: world.currentTurn, actionId: 3, payload: {} });
 
-        actionService.processAllActions();
-
         // 3. Проверяем смерть жертвы и превращение в еду
-        // Вызываем tick() для запуска логики пересчета состояния мира
+        // Вызываем tick(), который внутри себя вызовет processActions и затем проверку здоровья
         gameEngine.tick();
 
         expect(victimBug.is_live).toBe(false);
