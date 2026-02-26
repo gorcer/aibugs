@@ -1,6 +1,7 @@
 const world = require('../models/World');
 const Food = require('../models/Food');
 const visionService = require('./VisionService');
+const actionService = require('./ActionService');
 
 class GameEngine {
     constructor() {
@@ -91,7 +92,7 @@ class GameEngine {
     }
 
     processActions() {
-        // Будет реализовано в ActionService
+        actionService.processAllActions();
     }
 
     calculateFeelings(bug) {
@@ -104,6 +105,15 @@ class GameEngine {
         
         feelings.push({ energy: energyStatus });
         feelings.push({ health: bug.current_health > 70 ? 'high' : (bug.current_health < 30 ? 'low' : 'normal') });
+        
+        if (bug.lastPainAngle !== undefined) {
+            feelings.push({ pain: bug.lastPainAngle });
+            delete bug.lastPainAngle;
+        }
+
+        if (bug.actionQueue.length > 0) {
+            feelings.push({ currentAction: bug.actionQueue[0].actionId });
+        }
         
         return feelings;
     }
