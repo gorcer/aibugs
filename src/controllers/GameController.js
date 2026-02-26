@@ -55,6 +55,20 @@ class GameController {
         if (!bug) return res.status(404).json({ error: 'Bug not found' });
         res.json({ memory: bug.memory });
     }
+
+    getAllUnits(req, res) {
+        const units = Array.from(world.bugs.values()).map(bug => ({
+            uid: bug.uid,
+            name: bug.name,
+            x: bug.x,
+            y: bug.y,
+            angle: bug.angle,
+            is_live: bug.is_live,
+            current_health: bug.current_health,
+            current_energy: bug.current_energy
+        }));
+        res.json({ units });
+    }
 }
 
 module.exports = new GameController();
