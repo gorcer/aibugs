@@ -87,7 +87,6 @@ class ActionService {
     }
 
     handleBite(bug, action) {
-        console.log(`Bug ${bug.name} is biting at angle ${bug.angle}`);
         let targetX = bug.x;
         let targetY = bug.y;
 
@@ -105,7 +104,6 @@ class ActionService {
             if (target.amount <= 0) world.grid[targetX][targetY] = null;
         } else if (target && target.constructor.name === 'Bug') {
             const damage = bug.attack * bug.feed_speed;
-            console.log(`Biting another bug ${target.name}. Damage: ${damage}`);
             target.current_health -= damage;
             target.weight -= damage;
             bug.current_energy = Math.min(bug.max_energy, bug.current_energy + damage);

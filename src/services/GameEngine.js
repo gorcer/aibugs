@@ -39,7 +39,6 @@ class GameEngine {
 
     tick() {
         if (!this.isRunning) return;
-        console.log(`--- Tick Start: Turn ${world.currentTurn} ---`);
 
         const startTime = Date.now();
         
@@ -50,8 +49,6 @@ class GameEngine {
         const bugsArray = Array.from(world.bugs.values());
         bugsArray.forEach(bug => {
             if (!bug.is_live) return;
-
-            console.log(`Bug ${bug.name} (${bug.uid}): HP=${bug.current_health}, Energy=${bug.current_energy}`);
 
             // Потребление энергии за ход
             bug.current_energy -= bug.energy_consumption_per_turn;
@@ -76,9 +73,11 @@ class GameEngine {
             });
 
             bug.age++;
+        });
 
-            if (bug.current_health <= 0) {
-                console.log(`Bug ${bug.name} is dying. HP=${bug.current_health}`);
+        // Проверка смерти после всех обновлений
+        bugsArray.forEach(bug => {
+            if (bug.is_live && bug.current_health <= 0) {
                 this.killBug(bug);
             }
         });
