@@ -25,7 +25,8 @@ class App {
                 data.units, 
                 data.food, 
                 (uid) => this.selectUnit(uid),
-                (x, y) => this.setCoordinates(x, y)
+                (x, y) => this.setCoordinates(x, y),
+                (food) => this.renderer.renderFoodParams('unitParams', food)
             );
         } catch (e) {
             console.error('World map error', e);
