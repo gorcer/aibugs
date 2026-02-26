@@ -67,7 +67,13 @@ class GameController {
             current_health: bug.current_health,
             current_energy: bug.current_energy
         }));
-        res.json({ units });
+        const food = world.food.map(f => ({
+            x: f.x,
+            y: f.y,
+            amount: f.amount,
+            type: f.type
+        }));
+        res.json({ units, food });
     }
 }
 
