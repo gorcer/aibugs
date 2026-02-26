@@ -25,7 +25,8 @@ describe('AiBugs Bite Interaction Tests', () => {
         const attackerBug = world.bugs.get(attackerUid);
         const victimBug = world.bugs.get(victimUid);
 
-        attackerBug.current_energy = 5000;
+        // Уменьшаем энергию, чтобы увидеть прирост после укуса
+        attackerBug.current_energy = 50;
         const initialAttackerEnergy = attackerBug.current_energy;
         const initialVictimHealth = victimBug.current_health;
 
