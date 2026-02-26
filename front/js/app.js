@@ -20,7 +20,7 @@ class App {
     async refreshWorldMap() {
         try {
             const data = await this.api.getAllUnits();
-            this.renderer.renderWorldMap(data.units, (uid) => this.selectUnit(uid));
+            this.renderer.renderWorldMap(data.units, data.food, (uid) => this.selectUnit(uid));
         } catch (e) {
             console.error('World map error', e);
         }

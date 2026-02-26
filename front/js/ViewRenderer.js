@@ -3,8 +3,11 @@ export class ViewRenderer {
         this.container = document.getElementById(containerId);
     }
 
-    renderWorldMap(units, onUnitClick) {
-        if (!units || units.length === 0) {
+    renderWorldMap(units, food, onUnitClick) {
+        const hasUnits = units && units.length > 0;
+        const hasFood = food && food.length > 0;
+
+        if (!hasUnits && !hasFood) {
             document.getElementById('worldMapContainer').innerHTML = 'Мир пуст';
             return;
         }
@@ -12,30 +15,34 @@ export class ViewRenderer {
         const container = document.getElementById('worldMapContainer');
         container.innerHTML = '';
 
-        const minX = Math.min(...units.map(u => u.x), 0);
-        const maxX = Math.max(...units.map(u => u.x), 20);
-        const minY = Math.min(...units.map(u => u.y), 0);
-        const maxY = Math.max(...units.map(u => u.y), 20);
+        const allObjects = [...(units || []), ...(food || [])];
+        const minX = Math.min(...allObjects.map(o => o.x), 0);
+        const maxX = Math.max(...allObjects.map(o => o.x), 20);
+        const minY = Math.min(...allObjects.map(o => o.y), 0);
+        const maxY = Math.max(...allObjects.map(o => o.y), 20);
 
         const table = document.createElement('table');
         for (let y = minY; y <= maxY; y++) {
             const tr = document.createElement('tr');
             for (let x = minX; x <= maxX; x++) {
                 const td = document.createElement('td');
-                const unit = units.find(u => u.x === x && u.y === y);
+                const unit = units ? units.find(u => u.x === x && u.y === y) : null;
+                const foodItem = food ? food.find(f => f.x === x && f.y === y) : null;
+
                 if (unit) {
                     td.className = 'type-2';
                     td.style.cursor = 'pointer';
-                    
-                    // Отображение направления стрелкой
                     let arrow = '→';
                     if (unit.angle === 90) arrow = '↓';
                     else if (unit.angle === 180) arrow = '←';
                     else if (unit.angle === 270) arrow = '↑';
-                    
                     td.innerText = arrow;
-                    td.title = `${unit.name} (HP: ${unit.current_health}, Angle: ${unit.angle})`;
+                    td.title = `${unit.name} (HP: ${unit.current_health})`;
                     td.onclick = () => onUnitClick(unit.uid);
+                } else if (foodItem) {
+                    td.className = 'type-1';
+                    td.innerText = 'F';
+                    td.title = `Food: ${foodItem.amount}`;
                 }
                 tr.appendChild(td);
             }
