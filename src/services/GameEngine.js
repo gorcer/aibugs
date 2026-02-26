@@ -2,6 +2,7 @@ const world = require('../models/World');
 const Food = require('../models/Food');
 const visionService = require('./VisionService');
 const actionService = require('./ActionService');
+const socketService = require('./SocketService');
 
 class GameEngine {
     constructor() {
@@ -66,11 +67,13 @@ class GameEngine {
             const viewMap = visionService.getVisibleCells(bug);
             const feeling = this.calculateFeelings(bug);
             
-            bug.addMemory({
+            const memoryRecord = {
                 turnN: world.currentTurn,
                 viewMap,
                 feeling
-            });
+            };
+            bug.addMemory(memoryRecord);
+            socketService.sendUpdate(bug.uid, memoryRecord);
 
             bug.age++;
         });
