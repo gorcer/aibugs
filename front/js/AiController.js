@@ -6,6 +6,7 @@ class AiController {
         this.socket = null;
         this.currentUid = null;
         this.lastTurnN = 0;
+        this.totalCost = 0;
         
         this.logElement = document.getElementById('log');
         this.startBtn = document.getElementById('startBtn');
@@ -90,10 +91,16 @@ class AiController {
             });
 
             const result = await response.json();
+            
+            if (result.cost) {
+                this.totalCost += result.cost;
+                document.getElementById('totalCost').innerText = this.totalCost.toFixed(6);
+            }
+
             const content = result.choices[0].message.content;
             const decision = JSON.parse(content);
 
-            this.log(`LLM решила: ${content}`);
+            this.log(`LLM решила: ${content} (Cost: $${result.cost || 0})`);
 
             await this.api.sendAction(this.currentUid, {
                 initTourN: this.lastTurnN,
