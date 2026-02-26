@@ -39,6 +39,10 @@ class ActionService {
         const speedMultiplier = isLowEnergy ? bug.speed_multiply_on_low_energy : 1;
 
         switch (action.actionId) {
+            case ACTIONS.IDLE:
+                bug.lastActionResult = { actionId: action.actionId, status: 'OK' };
+                bug.actionQueue.shift();
+                break;
             case ACTIONS.MOVE:
                 this.handleMove(bug, action, speedMultiplier);
                 break;
