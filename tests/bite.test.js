@@ -82,7 +82,7 @@ describe('AiBugs Bite Interaction Tests', () => {
         const foodAtCell = world.grid[51][50];
         expect(foodAtCell.constructor.name).toBe('Food');
         expect(foodAtCell.type).toBe(2); // Мертвый жук
-        expect(foodAtCell.amount).toBe(49); // 50 - 1 (урон от укуса)
+        expect(foodAtCell.amount).toBe(40); // 50 - 10 (урон от укуса: attack=1 * feed_speed=10)
 
         // 4. Атакующий ест труп (еще один укус по той же клетке)
         const energyBeforeEating = attackerBug.current_energy;
@@ -95,6 +95,6 @@ describe('AiBugs Bite Interaction Tests', () => {
 
         // 5. Проверяем показатели после поедания
         expect(attackerBug.current_energy).toBe(energyBeforeEating + attackerBug.feed_speed);
-        expect(foodAtCell.amount).toBe(49 - attackerBug.feed_speed);
+        expect(foodAtCell.amount).toBe(40 - attackerBug.feed_speed);
     });
 });
