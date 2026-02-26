@@ -107,6 +107,10 @@ class ActionService {
             console.log(`[Action Bite] ${bug.name} bites ${target.name}. Damage: ${damage}`);
             target.current_health -= damage;
             target.weight -= damage;
+            if (target.is_live && (target.current_health <= 0 || target.weight <=0)) {
+                console.log(`[Death Check] Killing bug: ${bug.name} (HP: ${bug.current_health})`);
+                this.killBug(bug);
+            }
             bug.current_energy = Math.min(bug.max_energy, bug.current_energy + damage);
             
             // Запись боли в память цели

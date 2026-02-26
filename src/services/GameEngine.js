@@ -79,7 +79,7 @@ class GameEngine {
 
         // Проверка смерти после всех обновлений
         world.bugs.forEach(bug => {
-            if (bug.is_live && bug.current_health <= 0) {
+            if (bug.is_live && (bug.current_health <= 0 || bug.weight <=0)) {
                 console.log(`[Death Check] Killing bug: ${bug.name} (HP: ${bug.current_health})`);
                 this.killBug(bug);
             }
