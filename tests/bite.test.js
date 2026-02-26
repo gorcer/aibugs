@@ -64,7 +64,7 @@ describe('AiBugs Bite Interaction Tests', () => {
         // Устанавливаем жертве мало здоровья, чтобы она умерла от одного укуса
         victimBug.current_health = 1;
         victimBug.weight = 50;
-        attackerBug.current_energy = 1000;
+        attackerBug.current_energy = 50;
 
         // 2. Атакующий кусает жертву
         // Убеждаемся, что GameEngine запущен для корректной работы tick
