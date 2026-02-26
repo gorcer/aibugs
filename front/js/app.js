@@ -7,6 +7,7 @@ class App {
         this.renderer = new ViewRenderer('gridContainer');
         this.currentUid = null;
         this.lastTurnN = 0;
+        this.socket = null;
 
         this.initEventListeners();
         this.startWorldPolling();
@@ -34,7 +35,49 @@ class App {
     selectUnit(uid) {
         this.currentUid = uid;
         document.getElementById('currentUid').innerText = uid;
+        this.connectWebSocket(uid);
         this.refreshData();
+    }
+
+    connectWebSocket(uid) {
+        if (this.socket) {
+            this.socket.close();
+        }
+
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/?uid=${uid}`;
+        
+        this.socket = new WebSocket(wsUrl);
+
+        this.socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            this.handleUpdate(data);
+        };
+
+        this.socket.onclose = () => {
+            console.log('WebSocket connection closed');
+        };
+
+        this.socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+    }
+
+    async handleUpdate(data) {
+        // data: { turnN, viewMap, feeling }
+        this.lastTurnN = data.turnN;
+        
+        // Для обновления параметров юнита (HP, Energy) все равно нужен запрос списка юнитов
+        const unitsData = await this.api.getAllUnits();
+        const currentUnit = unitsData.units.find(u => u.uid === this.currentUid);
+
+        this.renderer.renderStatus('status', data);
+        this.renderer.renderGrid(data.viewMap);
+        this.renderer.renderUnitParams('unitParams', currentUnit);
+        
+        // Обновляем память (запрашиваем актуальный список)
+        const memData = await this.api.getMemory(this.currentUid);
+        this.renderer.renderMemory('memoryLog', memData.memory);
     }
 
     setCoordinates(x, y) {
@@ -101,9 +144,8 @@ class App {
                 payload
             });
             console.log('Action queued:', result);
-            // Автоматически обновляем данные через небольшую паузу, 
-            // чтобы сервер успел обработать ход (в реальности зависит от тика движка)
-            setTimeout(() => this.refreshData(), 500);
+            // Больше не вызываем refreshData по таймеру, 
+            // так как обновление придет через WebSocket после завершения хода
         } catch (error) {
             alert('Ошибка отправки действия: ' + error.message);
         }
