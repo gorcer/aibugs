@@ -23,8 +23,8 @@ describe('AiBugs Movement Mechanics Tests', () => {
         // Устанавливаем низкую энергию (ниже energy_low_amount)
         bug.current_energy = (bug.max_energy * bug.energy_low_amount / 100) - 1;
         
-        // При max_speed = 1 и multiplier = 0.3, прогресс за ход будет 0.3
-        // Потребуется 4 тика, чтобы прогресс стал >= 1 (0.3 * 4 = 1.2)
+        // При max_speed = 1 и multiplier = 0.5 (из Bug.js), прогресс за ход будет 0.5
+        // Потребуется 2 тика, чтобы прогресс стал >= 1 (0.5 * 2 = 1.0)
 
         await request(app)
             .post(`/api/action/${bugUid}`)
@@ -32,20 +32,12 @@ describe('AiBugs Movement Mechanics Tests', () => {
 
         const initialX = bug.x;
 
-        // Тик 1: прогресс 0.3
+        // Тик 1: прогресс 0.5
         gameEngine.tick();
         expect(bug.x).toBe(initialX);
         expect(bug.actionQueue.length).toBe(1);
 
-        // Тик 2: прогресс 0.6
-        gameEngine.tick();
-        expect(bug.x).toBe(initialX);
-
-        // Тик 3: прогресс 0.9
-        gameEngine.tick();
-        expect(bug.x).toBe(initialX);
-
-        // Тик 4: прогресс 1.2 -> перемещение
+        // Тик 2: прогресс 1.0 -> перемещение
         gameEngine.tick();
         expect(bug.x).toBe(initialX + 1);
         expect(bug.actionQueue.length).toBe(0);
