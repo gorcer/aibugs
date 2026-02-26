@@ -36,6 +36,7 @@ class Bug {
 
         this.memory = []; // История ходов
         this.actionQueue = [];
+        this.lastActionTurn = -1;
     }
 
     addMemory(record) {

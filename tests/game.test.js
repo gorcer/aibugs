@@ -45,6 +45,19 @@ describe('AiBugs API Tests', () => {
         expect(response.body.status).toBe('queued');
     });
 
+    test('POST /api/action/:unitUid - should return error if action already planned for the turn', async () => {
+        const response = await request(app)
+            .post(`/api/action/${unitUid}`)
+            .send({
+                initTourN: 0,
+                actionId: 2, // rotate
+                payload: { angle: 90 }
+            });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.error).toBe('Action already planned for this turn');
+    });
+
     test('GET /api/feel/:unitUid - should return feelings', async () => {
         const response = await request(app).get(`/api/feel/${unitUid}`);
         expect(response.statusCode).toBe(200);

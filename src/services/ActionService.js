@@ -6,6 +6,10 @@ class ActionService {
      * Добавляет действие в очередь жука
      */
     addAction(bug, initTurnN, actionId, payload = {}) {
+        if (bug.lastActionTurn === initTurnN) {
+            throw new Error('Action already planned for this turn');
+        }
+
         const action = {
             initTurnN,
             actionId,
@@ -14,6 +18,7 @@ class ActionService {
             progress: 0
         };
         bug.actionQueue.push(action);
+        bug.lastActionTurn = initTurnN;
     }
 
     /**
