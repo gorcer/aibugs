@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>AiBugs LLM Control</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { padding: 10px 20px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 4px; }
+        #log { background: #1e1e1e; color: #00ff00; padding: 15px; border-radius: 4px; height: 400px; overflow-y: auto; font-family: monospace; margin-top: 20px; }
+        .status-active { color: #28a745; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Управление жуком через LLM (OpenRouter)</h1>
+    
+    <div class="form-group">
+        <label>OpenRouter API Key:</label>
+        <input type="password" id="apiKey" placeholder="sk-or-...">
+    </div>
+    <div class="form-group">
+        <label>Модель:</label>
+        <input type="text" id="model" value="google/gemini-2.0-flash-001">
+    </div>
+    <div class="form-group">
+        <label>Начальный промпт (System Prompt):</label>
+        <textarea id="systemPrompt" rows="5">Ты — мозг жука в симуляции. Твоя цель — выживать и есть еду. 
+Тебе приходят данные о зрении (viewMap) и ощущениях (feeling).
+viewMap: массив объектов {x, y, type}. type 1 - еда, type 2 - другой жук. Твои координаты всегда 0,0.
+feeling: массив состояний.
+Доступные действия:
+1 (MOVE) - вперед
+2 (ROTATE) с payload {"angle": 90} или {"angle": -90}
+3 (BITE) - укусить перед собой.
+Отвечай ТОЛЬКО JSON-объектом: {"actionId": число, "payload": {}}</textarea>
+    </div>
+    <div class="form-group" style="display: flex; gap: 10px;">
+        <div style="flex: 1;">
+            <label>Имя жука:</label>
+            <input type="text" id="name" value="AI_Bug">
+        </div>
+        <div style="flex: 0.5;">
+            <label>X:</label>
+            <input type="number" id="x" value="5">
+        </div>
+        <div style="flex: 0.5;">
+            <label>Y:</label>
+            <input type="number" id="y" value="5">
+        </div>
+    </div>
+    
+    <button id="startBtn">Запустить AI</button>
+    <p>Статус: <span id="status">Остановлен</span> | UID: <span id="uid">нет</span></p>
+
+    <div id="log"></div>
+
+    <script type="module" src="js/AiController.js"></script>
+</body>
+</html>

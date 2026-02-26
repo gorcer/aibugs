@@ -10,6 +10,11 @@ const server = http.createServer(app);
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, '../front')));
+
+app.get('/ai', (req, res) => {
+    res.sendFile(path.join(__dirname, '../front/ai.html'));
+});
+
 app.use('/api', gameRoutes);
 
 const PORT = process.env.PORT || 3000;
