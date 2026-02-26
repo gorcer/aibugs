@@ -134,15 +134,16 @@ ${JSON.stringify(memory, null, 2)}
                 throw new Error(`OpenRouter Error: ${result.error.message}`);
             }
 
-            if (result.cost) {
-                this.totalCost += result.cost;
+            const cost = result.usage?.cost || result.cost || 0;
+            if (cost) {
+                this.totalCost += cost;
                 document.getElementById('totalCost').innerText = this.totalCost.toFixed(6);
             }
 
             const content = result.choices[0].message.content;
             const decision = JSON.parse(content);
 
-            this.log(`LLM решила: ${content} (Cost: $${result.cost || 0})`);
+            this.log(`LLM решила: ${content} (Cost: $${cost.toFixed(6)})`);
 
             await this.api.sendAction(this.currentUid, {
                 initTourN: this.lastTurnN,
