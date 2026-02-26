@@ -26,8 +26,15 @@ export class ViewRenderer {
                 if (unit) {
                     td.className = 'type-2';
                     td.style.cursor = 'pointer';
-                    td.innerText = 'B';
-                    td.title = `${unit.name} (HP: ${unit.current_health})`;
+                    
+                    // Отображение направления стрелкой
+                    let arrow = '→';
+                    if (unit.angle === 90) arrow = '↓';
+                    else if (unit.angle === 180) arrow = '←';
+                    else if (unit.angle === 270) arrow = '↑';
+                    
+                    td.innerText = arrow;
+                    td.title = `${unit.name} (HP: ${unit.current_health}, Angle: ${unit.angle})`;
                     td.onclick = () => onUnitClick(unit.uid);
                 }
                 tr.appendChild(td);
