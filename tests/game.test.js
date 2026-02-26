@@ -63,4 +63,49 @@ describe('AiBugs API Tests', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('feeling');
     });
+
+    test('Bite action - should decrease victim health/weight and increase attacker energy', async () => {
+        // 1. Создаем атакующего жука
+        const attackerRes = await request(app)
+            .post('/api/addUnit')
+            .send({ name: 'Attacker', x: 20, y: 20, angle: 0 }); // Смотрит вправо (x+)
+        const attackerUid = attackerRes.body.uid;
+
+        // 2. Создаем жертву справа от атакующего
+        const victimRes = await request(app)
+            .post('/api/addUnit')
+            .send({ name: 'Victim', x: 21, y: 20, angle: 180 });
+        const victimUid = victimRes.body.uid;
+
+        const attackerBug = world.bugs.get(attackerUid);
+        const victimBug = world.bugs.get(victimUid);
+
+        const initialAttackerEnergy = attackerBug.current_energy;
+        const initialVictimHealth = victimBug.current_health;
+        const initialVictimWeight = victimBug.weight;
+
+        // 3. Планируем укус
+        await request(app)
+            .post(`/api/action/${attackerUid}`)
+            .send({
+                initTourN: world.currentTurn,
+                actionId: 3, // bite
+                payload: {}
+            });
+
+        // 4. Выполняем тик движка вручную для обработки действия
+        const actionService = require('../src/services/ActionService');
+        actionService.processAllActions();
+
+        // 5. Проверяем результаты
+        expect(victimBug.current_health).toBeLessThan(initialVictimHealth);
+        expect(victimBug.weight).toBeLessThan(initialVictimWeight);
+        expect(attackerBug.current_energy).toBeGreaterThan(initialAttackerEnergy);
+
+        // 6. Проверяем, что жертва чувствует боль (нужно вызвать расчет чувств)
+        const gameEngine = require('../src/services/GameEngine');
+        const feelings = gameEngine.calculateFeelings(victimBug);
+        const painFeeling = feelings.find(f => f.pain !== undefined);
+        expect(painFeeling).toBeDefined();
+    });
 });
