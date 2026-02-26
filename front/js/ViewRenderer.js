@@ -74,27 +74,31 @@ export class ViewRenderer {
     }
 
     renderGrid(viewMap) {
-        if (!viewMap || viewMap.length === 0) {
-            this.container.innerHTML = 'Нет данных о зрении';
-            return;
-        }
+        // Добавляем самого жука в точку (0,0) для визуализации центра
+        const cells = [...(viewMap || []), { x: 0, y: 0, type: 'self' }];
 
         this.container.innerHTML = '';
-        const minX = Math.min(...viewMap.map(c => c.x));
-        const maxX = Math.max(...viewMap.map(c => c.x));
-        const minY = Math.min(...viewMap.map(c => c.y));
-        const maxY = Math.max(...viewMap.map(c => c.y));
+        const minX = Math.min(...cells.map(c => c.x));
+        const maxX = Math.max(...cells.map(c => c.x));
+        const minY = Math.min(...cells.map(c => c.y));
+        const maxY = Math.max(...cells.map(c => c.y));
 
         const table = document.createElement('table');
         for (let y = minY; y <= maxY; y++) {
             const tr = document.createElement('tr');
             for (let x = minX; x <= maxX; x++) {
                 const td = document.createElement('td');
-                const cell = viewMap.find(c => c.x === x && c.y === y);
+                const cell = cells.find(c => c.x === x && c.y === y);
+                
                 if (cell) {
-                    td.className = `type-${cell.type}`;
-                    td.title = `X:${x} Y:${y}`;
-                    td.innerText = cell.type === 1 ? 'F' : (cell.type === 2 ? 'B' : '');
+                    if (cell.type === 'self') {
+                        td.className = 'current-bug';
+                        td.innerText = 'Я';
+                    } else {
+                        td.className = `type-${cell.type}`;
+                        td.innerText = cell.type === 1 ? 'F' : (cell.type === 2 ? 'B' : '');
+                    }
+                    td.title = `Rel X:${x} Y:${y}`;
                 }
                 tr.appendChild(td);
             }
