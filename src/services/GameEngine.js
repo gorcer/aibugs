@@ -62,11 +62,6 @@ class GameEngine {
                 bug.weight = Math.min(100, bug.weight + bug.weight_increase_on_high_energy_per_turn);
             }
 
-            if (bug.current_health <= 0) {
-                this.killBug(bug);
-                return;
-            }
-
             // Обновление зрения и чувств в памяти
             const viewMap = visionService.getVisibleCells(bug);
             const feeling = this.calculateFeelings(bug);
@@ -78,6 +73,10 @@ class GameEngine {
             });
 
             bug.age++;
+
+            if (bug.current_health <= 0) {
+                this.killBug(bug);
+            }
         });
 
         // 3. Респаун еды и очистка
