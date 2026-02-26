@@ -39,7 +39,8 @@ class VisionService {
                     if (cellContent) {
                         type = cellContent.constructor.name === 'Bug' ? 2 : 1;
                     }
-                    viewMap.push({ x: targetX, y: targetY, type });
+                    // Относительные координаты: 0,0 - клетка прямо перед жуком
+                    viewMap.push({ x: side, y: step - 1, type });
                 }
             }
         }
