@@ -77,9 +77,13 @@ class ActionService {
                 bug.y = nextY;
                 world.grid[bug.x][bug.y] = bug;
                 bug.current_energy -= cost;
+                action.status = 'OK';
+                bug.lastActionResult = { actionId: action.actionId, status: 'OK' };
                 bug.actionQueue.shift();
             } else {
                 // Если путь прегражден, действие заканчивается
+                action.status = 'Fail';
+                bug.lastActionResult = { actionId: action.actionId, status: 'Fail' };
                 bug.actionQueue.shift();
             }
         }
@@ -102,6 +106,8 @@ class ActionService {
         if (action.progress >= absRotation) {
             bug.angle = (bug.angle + targetRotation + 360) % 360;
             bug.current_energy -= cost;
+            action.status = 'OK';
+            bug.lastActionResult = { actionId: action.actionId, status: 'OK' };
             bug.actionQueue.shift();
         }
     }
@@ -123,6 +129,7 @@ class ActionService {
 
             bug.current_energy = Math.min(bug.max_energy, bug.current_energy + amount);
             if (target.amount <= 0) world.grid[targetX][targetY] = null;
+            bug.lastActionResult = { actionId: action.actionId, status: 'OK' };
         } else if (target && target.constructor.name === 'Bug') {
             const damage = bug.attack * bug.feed_speed;
             target.current_health -= damage;
@@ -138,6 +145,9 @@ class ActionService {
             // Запись боли в память цели
             const relativeAngle = (bug.angle - target.angle + 180 + 360) % 360;
             target.lastPainAngle = relativeAngle;
+            bug.lastActionResult = { actionId: action.actionId, status: 'OK' };
+        } else {
+            bug.lastActionResult = { actionId: action.actionId, status: 'Fail' };
         }
         
         bug.actionQueue.shift();

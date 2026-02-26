@@ -70,9 +70,11 @@ class GameEngine {
             const memoryRecord = {
                 turnN: world.currentTurn,
                 viewMap,
-                feeling
+                feeling,
+                lastAction: bug.lastActionResult || null
             };
             bug.addMemory(memoryRecord);
+            delete bug.lastActionResult;
             socketService.sendUpdate(bug.uid, memoryRecord);
 
             bug.age++;
