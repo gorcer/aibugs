@@ -68,14 +68,13 @@ describe('AiBugs Bite Interaction Tests', () => {
         // 2. Атакующий кусает жертву
         // Убеждаемся, что GameEngine запущен для корректной работы tick
         gameEngine.isRunning = true;
+        const currentTurn = world.currentTurn;
         
         await request(app)
             .post(`/api/action/${attackerUid}`)
-            .send({ initTourN: world.currentTurn, actionId: 3, payload: {} });
+            .send({ initTourN: currentTurn, actionId: 3, payload: {} });
 
         // 3. Проверяем смерть жертвы и превращение в еду
-        // Вызываем tick(), который внутри себя вызовет processActions и затем проверку здоровья
-        // Устанавливаем текущий ход в запросе равным текущему ходу мира
         gameEngine.tick();
 
         expect(victimBug.is_live).toBe(false);

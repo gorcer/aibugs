@@ -76,7 +76,7 @@ class GameEngine {
         });
 
         // Проверка смерти после всех обновлений
-        bugsArray.forEach(bug => {
+        world.bugs.forEach(bug => {
             if (bug.is_live && bug.current_health <= 0) {
                 this.killBug(bug);
             }
