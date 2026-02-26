@@ -42,11 +42,12 @@ class GameEngine {
 
         const startTime = Date.now();
         
-        // 1. Обработка действий жуков (заглушка для ActionService)
+        // 1. Обработка действий жуков
         this.processActions();
 
         // 2. Расчет состояния для каждого жука
-        world.bugs.forEach(bug => {
+        const bugsArray = Array.from(world.bugs.values());
+        bugsArray.forEach(bug => {
             if (!bug.is_live) return;
 
             // Потребление энергии за ход

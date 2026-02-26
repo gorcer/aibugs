@@ -66,6 +66,9 @@ describe('AiBugs Bite Interaction Tests', () => {
         attackerBug.current_energy = 1000;
 
         // 2. Атакующий кусает жертву
+        // Убеждаемся, что GameEngine запущен для корректной работы tick
+        gameEngine.isRunning = true;
+        
         await request(app)
             .post(`/api/action/${attackerUid}`)
             .send({ initTourN: world.currentTurn, actionId: 3, payload: {} });
