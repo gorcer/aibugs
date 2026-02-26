@@ -2,6 +2,7 @@ const request = require('supertest');
 const express = require('express');
 const gameRoutes = require('../src/routes/gameRoutes');
 const world = require('../src/models/World');
+const ACTIONS = require('../src/constants/Actions');
 
 const app = express();
 app.use(express.json());
@@ -22,7 +23,7 @@ describe('AiBugs Actions API Tests', () => {
             .post(`/api/actions/action/${unitUid}`)
             .send({
                 initTourN: world.currentTurn + 1,
-                actionId: 1,
+                actionId: ACTIONS.MOVE,
                 payload: {}
             });
 
@@ -34,11 +35,11 @@ describe('AiBugs Actions API Tests', () => {
         const turn = world.currentTurn + 2;
         await request(app)
             .post(`/api/actions/action/${unitUid}`)
-            .send({ initTourN: turn, actionId: 1, payload: {} });
+            .send({ initTourN: turn, actionId: ACTIONS.MOVE, payload: {} });
 
         const response = await request(app)
             .post(`/api/actions/action/${unitUid}`)
-            .send({ initTourN: turn, actionId: 2, payload: {} });
+            .send({ initTourN: turn, actionId: ACTIONS.ROTATE, payload: {} });
 
         expect(response.statusCode).toBe(400);
         expect(response.body.error).toBe('Action already planned for this turn');

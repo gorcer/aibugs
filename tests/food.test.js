@@ -5,6 +5,7 @@ const world = require('../src/models/World');
 const actionService = require('../src/services/ActionService');
 const gameEngine = require('../src/services/GameEngine');
 const Food = require('../src/models/Food');
+const ACTIONS = require('../src/constants/Actions');
 
 const app = express();
 app.use(express.json());
@@ -35,7 +36,7 @@ describe('AiBugs Food Mechanics Tests', () => {
         // 2. Жук кусает еду
         await request(app)
             .post(`/api/action/${bugUid}`)
-            .send({ initTourN: world.currentTurn, actionId: 3, payload: {} });
+            .send({ initTourN: world.currentTurn, actionId: ACTIONS.BITE, payload: {} });
 
         // 3. Выполняем тик. Еда должна быть съедена и удалена, новая должна появиться
         gameEngine.tick();

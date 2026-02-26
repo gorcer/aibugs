@@ -27,7 +27,7 @@ describe('AiBugs Movement Mechanics Tests', () => {
 
         await request(app)
             .post(`/api/action/${bugUid}`)
-            .send({ initTourN: world.currentTurn, actionId: 1, payload: {} });
+            .send({ initTourN: world.currentTurn, actionId: ACTIONS.MOVE, payload: {} });
 
         const initialX = bug.x;
 

@@ -1,5 +1,6 @@
 const world = require('../models/World');
 const Food = require('../models/Food');
+const ACTIONS = require('../constants/Actions');
 
 class ActionService {
     /**
@@ -38,13 +39,13 @@ class ActionService {
         const speedMultiplier = isLowEnergy ? bug.speed_multiply_on_low_energy : 1;
 
         switch (action.actionId) {
-            case 1: // move
+            case ACTIONS.MOVE:
                 this.handleMove(bug, action, speedMultiplier);
                 break;
-            case 2: // rotate
+            case ACTIONS.ROTATE:
                 this.handleRotate(bug, action, speedMultiplier);
                 break;
-            case 3: // bite
+            case ACTIONS.BITE:
                 this.handleBite(bug, action);
                 break;
         }

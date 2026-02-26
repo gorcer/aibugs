@@ -4,6 +4,7 @@ const gameRoutes = require('../src/routes/gameRoutes');
 const world = require('../src/models/World');
 const actionService = require('../src/services/ActionService');
 const gameEngine = require('../src/services/GameEngine');
+const ACTIONS = require('../src/constants/Actions');
 
 const app = express();
 app.use(express.json());
@@ -32,7 +33,7 @@ describe('AiBugs Bite Interaction Tests', () => {
             .post(`/api/action/${attackerUid}`)
             .send({
                 initTourN: world.currentTurn,
-                actionId: 3,
+                actionId: ACTIONS.BITE,
                 payload: {}
             });
 
@@ -72,7 +73,7 @@ describe('AiBugs Bite Interaction Tests', () => {
         
         await request(app)
             .post(`/api/action/${attackerUid}`)
-            .send({ initTourN: currentTurn, actionId: 3, payload: {} });
+            .send({ initTourN: currentTurn, actionId: ACTIONS.BITE, payload: {} });
 
         // 3. Проверяем смерть жертвы и превращение в еду
         gameEngine.tick();
@@ -88,7 +89,7 @@ describe('AiBugs Bite Interaction Tests', () => {
         
         await request(app)
             .post(`/api/action/${attackerUid}`)
-            .send({ initTourN: world.currentTurn + 1, actionId: 3, payload: {} });
+            .send({ initTourN: world.currentTurn + 1, actionId: ACTIONS.BITE, payload: {} });
 
         actionService.processAllActions();
 
