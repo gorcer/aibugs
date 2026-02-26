@@ -75,7 +75,7 @@ class GameEngine {
             };
             bug.addMemory(memoryRecord);
             delete bug.lastActionResult;
-            socketService.sendUpdate(bug.uid, memoryRecord);
+            socketService.sendUpdate(bug.uid, bug.memory);
 
             bug.age++;
         });
