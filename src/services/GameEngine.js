@@ -87,8 +87,10 @@ class GameEngine {
 
         world.currentTurn++;
         
-        const nextTickDelay = Math.max(0, world.turnEndTime - Date.now());
-        setTimeout(() => this.tick(), nextTickDelay);
+        if (process.env.NODE_ENV !== 'test') {
+            const nextTickDelay = Math.max(0, world.turnEndTime - Date.now());
+            setTimeout(() => this.tick(), nextTickDelay);
+        }
     }
 
     processActions() {

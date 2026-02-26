@@ -73,8 +73,8 @@ describe('AiBugs Bite Interaction Tests', () => {
         actionService.processAllActions();
 
         // 3. Проверяем смерть жертвы и превращение в еду
-        // В GameEngine.tick() вызывается killBug, если health <= 0
-        gameEngine.killBug(victimBug);
+        // Вызываем tick() для запуска логики пересчета состояния мира
+        gameEngine.tick();
 
         expect(victimBug.is_live).toBe(false);
         const foodAtCell = world.grid[51][50];
