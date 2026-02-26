@@ -120,6 +120,7 @@ class ActionService {
         if (target instanceof Food) {
             const amount = Math.min(target.amount, bug.feed_speed);
             target.amount -= amount;
+
             bug.current_energy = Math.min(bug.max_energy, bug.current_energy + amount);
             if (target.amount <= 0) world.grid[targetX][targetY] = null;
         } else if (target && target.constructor.name === 'Bug') {
