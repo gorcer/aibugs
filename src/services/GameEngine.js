@@ -135,10 +135,39 @@ class GameEngine {
     }
 
     updateFood() {
-        // Уменьшение общего лимита калорий
+        // Уменьшение общего лимита калорий за ход
         world.feedAmount = Math.max(0, world.feedAmount - world.subtractFeedPerTurn);
-        // Очистка съеденной еды и добавление новой (упрощенно)
-        world.food = world.food.filter(f => f.amount > 0);
+
+        // 1. Очистка съеденной еды из массива и сетки
+        world.food = world.food.filter(f => {
+            if (f.amount <= 0) {
+                if (world.grid[f.x][f.y] === f) {
+                    world.grid[f.x][f.y] = null;
+                }
+                return false;
+            }
+            return true;
+        });
+
+        // 2. Добавление новой еды, если её меньше чем feedCount
+        const currentTotalAmount = world.food.reduce((sum, f) => sum + f.amount, 0);
+        let remainingToSpawn = world.feedCount - world.food.length;
+        let caloriesToDistribute = world.feedAmount - currentTotalAmount;
+
+        if (remainingToSpawn > 0 && caloriesToDistribute > 0) {
+            for (let i = 0; i < remainingToSpawn; i++) {
+                const x = Math.floor(Math.random() * world.width);
+                const y = Math.floor(Math.random() * world.height);
+
+                if (world.isCellEmpty(x, y)) {
+                    const amount = Math.floor(caloriesToDistribute / (remainingToSpawn - i));
+                    const food = new Food(x, y, amount);
+                    world.food.push(food);
+                    world.grid[x][y] = food;
+                    caloriesToDistribute -= amount;
+                }
+            }
+        }
     }
 
     updateTurnTime() {
