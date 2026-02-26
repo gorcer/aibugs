@@ -91,22 +91,25 @@ class AiController {
         this.socket = new WebSocket(wsUrl);
 
         this.socket.onmessage = async (event) => {
-            const data = JSON.parse(event.data);
-            this.lastTurnN = data.turnN;
-            this.log(`Ход ${data.turnN}. Запрос к LLM...`);
-            await this.getLlmDecision(data);
+            const memory = JSON.parse(event.data);
+            const lastState = memory[memory.length - 1];
+            if (!lastState) return;
+
+            this.lastTurnN = lastState.turnN;
+            this.log(`Ход ${lastState.turnN}. Анализ памяти (${memory.length} зап.). Запрос к LLM...`);
+            await this.getLlmDecision(memory);
         };
     }
 
-    async getLlmDecision(worldState) {
+    async getLlmDecision(memory) {
         const apiKey = document.getElementById('apiKey').value;
         const model = document.getElementById('model').value;
         const systemPrompt = document.getElementById('systemPrompt').value;
 
-        const userPrompt = `Текущее состояние:
-Зрение: ${JSON.stringify(worldState.viewMap)}
-Ощущения: ${JSON.stringify(worldState.feeling)}
-Твой ход.`;
+        const userPrompt = `История твоей памяти (последние ходы):
+${JSON.stringify(memory, null, 2)}
+
+Проанализируй историю и текущее состояние. Твой ход.`;
 
         try {
             const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {

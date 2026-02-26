@@ -50,8 +50,11 @@ class App {
         this.socket = new WebSocket(wsUrl);
 
         this.socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            this.handleUpdate(data);
+            const memory = JSON.parse(event.data);
+            const lastState = memory[memory.length - 1];
+            if (lastState) {
+                this.handleUpdate(lastState, memory);
+            }
         };
 
         this.socket.onclose = () => {
@@ -63,21 +66,20 @@ class App {
         };
     }
 
-    async handleUpdate(data) {
-        // data: { turnN, viewMap, feeling }
-        this.lastTurnN = data.turnN;
+    async handleUpdate(lastState, memory) {
+        // lastState: { turnN, viewMap, feeling, lastAction }
+        this.lastTurnN = lastState.turnN;
         
         // Для обновления параметров юнита (HP, Energy) все равно нужен запрос списка юнитов
         const unitsData = await this.api.getAllUnits();
         const currentUnit = unitsData.units.find(u => u.uid === this.currentUid);
 
-        this.renderer.renderStatus('status', data);
-        this.renderer.renderGrid(data.viewMap);
+        this.renderer.renderStatus('status', lastState);
+        this.renderer.renderGrid(lastState.viewMap);
         this.renderer.renderUnitParams('unitParams', currentUnit);
         
-        // Обновляем память (запрашиваем актуальный список)
-        const memData = await this.api.getMemory(this.currentUid);
-        this.renderer.renderMemory('memoryLog', memData.memory);
+        // Обновляем память из полученных по сокету данных
+        this.renderer.renderMemory('memoryLog', memory);
     }
 
     setCoordinates(x, y) {
