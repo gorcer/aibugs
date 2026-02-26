@@ -57,33 +57,52 @@ class ActionService {
             return;
         }
 
-        // Расчет перемещения (упрощенно: 1 клетка за ход с учетом множителя)
-        let nextX = bug.x;
-        let nextY = bug.y;
+        // Скорость с учетом мультипликатора (клеток за ход)
+        const effectiveSpeed = bug.max_speed * multiplier;
+        action.progress += effectiveSpeed;
 
-        if (bug.angle === 0) nextX++;
-        else if (bug.angle === 90) nextY++;
-        else if (bug.angle === 180) nextX--;
-        else if (bug.angle === 270) nextY--;
+        if (action.progress >= 1) {
+            let nextX = bug.x;
+            let nextY = bug.y;
 
-        if (world.isCellEmpty(nextX, nextY)) {
-            world.grid[bug.x][bug.y] = null;
-            bug.x = nextX;
-            bug.y = nextY;
-            world.grid[bug.x][bug.y] = bug;
-            bug.current_energy -= cost;
+            if (bug.angle === 0) nextX++;
+            else if (bug.angle === 90) nextY++;
+            else if (bug.angle === 180) nextX--;
+            else if (bug.angle === 270) nextY--;
+
+            if (world.isCellEmpty(nextX, nextY)) {
+                world.grid[bug.x][bug.y] = null;
+                bug.x = nextX;
+                bug.y = nextY;
+                world.grid[bug.x][bug.y] = bug;
+                bug.current_energy -= cost;
+                bug.actionQueue.shift();
+            } else {
+                // Если путь прегражден, действие заканчивается
+                bug.actionQueue.shift();
+            }
         }
-        
-        bug.actionQueue.shift();
     }
 
     handleRotate(bug, action, multiplier) {
         const targetRotation = action.payload.angle || 90; // +90 или -90
-        const cost = Math.abs(targetRotation) * bug.energy_consumption_per_degree;
+        const absRotation = Math.abs(targetRotation);
+        const cost = absRotation * bug.energy_consumption_per_degree;
         
-        bug.angle = (bug.angle + targetRotation + 360) % 360;
-        bug.current_energy -= cost;
-        bug.actionQueue.shift();
+        if (bug.current_energy < cost) {
+            bug.actionQueue.shift();
+            return;
+        }
+
+        // Скорость поворота с учетом мультипликатора (градусов за ход)
+        const effectiveRotateSpeed = bug.rotate_speed * multiplier;
+        action.progress += effectiveRotateSpeed;
+
+        if (action.progress >= absRotation) {
+            bug.angle = (bug.angle + targetRotation + 360) % 360;
+            bug.current_energy -= cost;
+            bug.actionQueue.shift();
+        }
     }
 
     handleBite(bug, action) {
