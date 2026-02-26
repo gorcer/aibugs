@@ -52,7 +52,7 @@ class GameEngine {
             if (!bug.is_live) return;
 
             // Потребление энергии за ход
-            bug.current_energy -= bug.energy_consumption_per_turn;
+            bug.current_energy = Math.max(0, bug.current_energy - bug.energy_consumption_per_turn);
             
             // Логика здоровья при низкой/высокой энергии
             const energyPercent = (bug.current_energy / bug.max_energy) * 100;

@@ -80,7 +80,7 @@ class ActionService {
                 bug.x = nextX;
                 bug.y = nextY;
                 world.grid[bug.x][bug.y] = bug;
-                bug.current_energy -= cost;
+                bug.current_energy = Math.max(0, bug.current_energy - cost);
                 action.status = 'OK';
                 bug.lastActionResult = { actionId: action.actionId, status: 'OK' };
                 bug.actionQueue.shift();
@@ -109,7 +109,7 @@ class ActionService {
 
         if (action.progress >= absRotation) {
             bug.angle = (bug.angle + targetRotation + 360) % 360;
-            bug.current_energy -= cost;
+            bug.current_energy = Math.max(0, bug.current_energy - cost);
             action.status = 'OK';
             bug.lastActionResult = { actionId: action.actionId, status: 'OK' };
             bug.actionQueue.shift();
