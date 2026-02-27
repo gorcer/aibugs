@@ -1,9 +1,10 @@
-import { ApiService } from './ApiService.js';
-import { ViewRenderer } from './ViewRenderer.js';
+import {ApiService} from './ApiService.js';
+import {ViewRenderer} from './ViewRenderer.js';
 
 class FarmBug {
-    constructor(uid, config, api, onLog) {
+    constructor(uid, name, config, api, onLog) {
         this.uid = uid;
+        this.name = name;
         this.config = config;
         this.api = api;
         this.onLog = onLog;
@@ -23,7 +24,7 @@ class FarmBug {
         const line = `[${new Date().toLocaleTimeString()}] ${msg}`;
         this.logs.push(line);
         if (this.logs.length > 100) this.logs.shift();
-        this.onLog(this.uid, line);
+        this.onLog(this.name, line);
     }
 
     connect() {
@@ -35,7 +36,7 @@ class FarmBug {
             const memory = JSON.parse(event.data);
             const lastState = memory[memory.length - 1];
             if (!lastState) return;
-            
+
             this.lastMemory = lastState;
 
             if (this.isProcessing || lastState.brainSleeping) return;
@@ -65,16 +66,19 @@ class FarmBug {
                     "model": this.config.model,
                     "messages": [
                         {"role": "system", "content": this.config.systemPrompt},
-                        {"role": "user", "content": `Твой текущий опыт: ${this.experience || 'пока отсутствует'}\n\nИстория последних ходов: ${JSON.stringify(memory)}`}
+                        {
+                            "role": "user",
+                            "content": `Твой текущий опыт: ${this.experience || 'пока отсутствует'}\n\nИстория последних ходов: ${JSON.stringify(memory)}`
+                        }
                     ],
-                    "response_format": { "type": "json_object" }
+                    "response_format": {"type": "json_object"}
                 }),
                 signal: controller.signal
             });
 
             const result = await Promise.race([
                 response.json(),
-                new Promise((_, reject) => 
+                new Promise((_, reject) =>
                     setTimeout(() => reject(new Error('Timeout reading response')), 25000)
                 )
             ]);
@@ -93,6 +97,7 @@ class FarmBug {
             const decision = JSON.parse(content);
 
             if (decision.experience) {
+                this.log(" New experience: " + decision.experience);
                 this.experience = decision.experience;
             }
             if (decision.mood) {
@@ -154,8 +159,8 @@ class FarmController {
         try {
             const result = await this.api.addUnit(bugData);
             if (result.error) throw new Error(result.error);
-            
-            const farmBug = new FarmBug(result.uid, config, this.api, (uid, msg) => console.log(uid, msg));
+
+            const farmBug = new FarmBug(result.uid, bugData.name, config, this.api, (uid, msg) => console.log(uid, msg));
             this.bugs.set(result.uid, farmBug);
             document.getElementById('addForm').style.display = 'none';
         } catch (e) {
@@ -165,7 +170,7 @@ class FarmController {
 
     async refreshList() {
         const data = await this.api.getWorldStat();
-        
+
         // Обновление статистики мира
         document.getElementById('statTurnN').innerText = data.turnN;
         document.getElementById('statDecisionTime').innerText = data.decisionTime;
@@ -185,8 +190,8 @@ class FarmController {
 
         // Отрисовка карты
         this.renderer.renderWorldMap(
-            data.units, 
-            data.food, 
+            data.units,
+            data.food,
             (uid) => this.showLog(uid),
             (x, y) => {
                 document.getElementById('addForm').style.display = 'block';
@@ -203,11 +208,11 @@ class FarmController {
         data.units.forEach(u => {
             const card = document.createElement('div');
             card.className = 'bug-card';
-            
+
             const healthPct = u.current_health;
-            const energyPct = Math.min(u.current_energy , 100); // Упрощенная нормализация
+            const energyPct = Math.min(u.current_energy, 100); // Упрощенная нормализация
             const color = this.renderer.getUnitColor(u.uid);
-            
+
             const bug = this.bugs.get(u.uid);
             let avgTime = '0';
             if (bug && bug.responseTimes.length > 0) {
@@ -229,7 +234,7 @@ class FarmController {
 
             card.querySelector('.btn-log').onclick = () => this.showLog(u.uid);
             card.querySelector('.btn-del').onclick = () => this.deleteBug(u.uid);
-            
+
             container.appendChild(card);
         });
     }
@@ -239,10 +244,10 @@ class FarmController {
         const logContent = document.getElementById('logContent');
         const expContent = document.getElementById('experienceContent');
         const viewGridContainer = document.getElementById('bugViewGrid');
-        
+
         logContent.innerText = bug ? bug.logs.join('\n') : 'Лог пуст или AI не запущен для этого жука в этой сессии';
         expContent.innerText = (bug && bug.experience) ? bug.experience : 'Пока нет накопленного опыта...';
-        
+
         if (bug && bug.lastMemory && bug.lastMemory.viewMap) {
             // Используем существующий ViewRenderer для отрисовки сетки зрения
             // Но нам нужно временно подменить контейнер или создать новый экземпляр
@@ -251,7 +256,7 @@ class FarmController {
         } else {
             viewGridContainer.innerHTML = 'Нет данных о зрении';
         }
-        
+
         document.getElementById('logModal').style.display = 'block';
     }
 
@@ -279,7 +284,7 @@ class FarmController {
                 else if (curAngle === 90) curY++;
                 else if (curAngle === 180) curX--;
                 else if (curAngle === 270) curY--;
-                path.push({ x: curX, y: curY, type: 'move' });
+                path.push({x: curX, y: curY, type: 'move'});
             } else if (step.actionId === 2) { // ROTATE
                 const rotate = step.payload?.angle || 90;
                 curAngle = (curAngle + rotate + 360) % 360;
@@ -289,7 +294,7 @@ class FarmController {
                 else if (curAngle === 90) by++;
                 else if (curAngle === 180) bx--;
                 else if (curAngle === 270) by--;
-                path.push({ x: bx, y: by, type: 'bite' });
+                path.push({x: bx, y: by, type: 'bite'});
             }
         });
         return path;
