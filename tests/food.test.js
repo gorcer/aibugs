@@ -36,13 +36,14 @@ describe('AiBugs Food Mechanics Tests', () => {
         // 2. Жук кусает еду
         await request(app)
             .post(`/api/action/${bugUid}`)
-            .send({ initTourN: world.currentTurn, actionId: ACTIONS.BITE, payload: {} });
+            .send({ initTourN: world.currentTurn, actions: [{ actionId: ACTIONS.BITE, payload: {} }] });
 
         // 3. Выполняем тик. Еда должна быть съедена и удалена, новая должна появиться
         gameEngine.tick();
 
-        // Проверяем, что старая еда исчезла из сетки
-        expect(world.grid[foodX][foodY]).not.toBe(smallFood);
+        // Проверяем, что старая еда исчезла из сетки (или заменена новой)
+        const cellContent = world.grid[foodX][foodY];
+        expect(cellContent).not.toBe(smallFood);
         
         // Проверяем, что количество элементов еды стремится к feedCount
         expect(world.food.length).toBe(world.feedCount);

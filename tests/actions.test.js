@@ -18,30 +18,27 @@ describe('AiBugs Actions API Tests', () => {
         unitUid = res.body.uid;
     });
 
-    test('POST /api/action/:unitUid - should queue an action', async () => {
+    test('POST /api/action/:unitUid - should queue an action plan', async () => {
         const response = await request(app)
             .post(`/api/actions/action/${unitUid}`)
             .send({
                 initTourN: world.currentTurn + 1,
-                actionId: ACTIONS.MOVE,
-                payload: {}
+                actions: [{ actionId: ACTIONS.MOVE, payload: {} }]
             });
 
         expect(response.statusCode).toBe(200);
-        expect(response.body.status).toBe('queued');
+        expect(response.body.status).toBe('plan_accepted');
     });
 
-    test('POST /api/action/:unitUid - should return error if action already planned for the turn', async () => {
-        const turn = world.currentTurn + 2;
-        await request(app)
-            .post(`/api/actions/action/${unitUid}`)
-            .send({ initTourN: turn, actionId: ACTIONS.MOVE, payload: {} });
-
+    test('POST /api/action/:unitUid - should return error if actions is not an array', async () => {
         const response = await request(app)
             .post(`/api/actions/action/${unitUid}`)
-            .send({ initTourN: turn, actionId: ACTIONS.ROTATE, payload: {} });
+            .send({
+                initTourN: world.currentTurn + 2,
+                actions: { actionId: ACTIONS.MOVE }
+            });
 
         expect(response.statusCode).toBe(400);
-        expect(response.body.error).toBe('Action already planned for this turn');
+        expect(response.body.error).toBe('Actions must be an array');
     });
 });

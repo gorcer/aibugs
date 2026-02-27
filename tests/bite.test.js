@@ -34,8 +34,7 @@ describe('AiBugs Bite Interaction Tests', () => {
             .post(`/api/action/${attackerUid}`)
             .send({
                 initTourN: world.currentTurn,
-                actionId: ACTIONS.BITE,
-                payload: {}
+                actions: [{ actionId: ACTIONS.BITE, payload: {} }]
             });
 
         actionService.processAllActions();
@@ -61,6 +60,7 @@ describe('AiBugs Bite Interaction Tests', () => {
 
         const attackerBug = world.bugs.get(attackerUid);
         const victimBug = world.bugs.get(victimUid);
+        if (!victimBug) throw new Error('Victim bug not found');
 
         // Устанавливаем жертве мало здоровья, чтобы она умерла от одного укуса
         victimBug.current_health = 1;
@@ -74,7 +74,7 @@ describe('AiBugs Bite Interaction Tests', () => {
         
         await request(app)
             .post(`/api/action/${attackerUid}`)
-            .send({ initTourN: currentTurn, actionId: ACTIONS.BITE, payload: {} });
+            .send({ initTourN: currentTurn, actions: [{ actionId: ACTIONS.BITE, payload: {} }] });
 
         // 3. Проверяем смерть жертвы и превращение в еду
         gameEngine.tick();
@@ -90,7 +90,7 @@ describe('AiBugs Bite Interaction Tests', () => {
         
         await request(app)
             .post(`/api/action/${attackerUid}`)
-            .send({ initTourN: world.currentTurn + 1, actionId: ACTIONS.BITE, payload: {} });
+            .send({ initTourN: world.currentTurn + 1, actions: [{ actionId: ACTIONS.BITE, payload: {} }] });
 
         actionService.processAllActions();
 
