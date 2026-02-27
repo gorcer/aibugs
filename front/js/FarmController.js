@@ -233,9 +233,19 @@ class FarmController {
         const bug = this.bugs.get(uid);
         const logContent = document.getElementById('logContent');
         const expContent = document.getElementById('experienceContent');
+        const viewGridContainer = document.getElementById('bugViewGrid');
         
         logContent.innerText = bug ? bug.logs.join('\n') : 'Лог пуст или AI не запущен для этого жука в этой сессии';
         expContent.innerText = (bug && bug.experience) ? bug.experience : 'Пока нет накопленного опыта...';
+        
+        if (bug && bug.lastMemory && bug.lastMemory.viewMap) {
+            // Используем существующий ViewRenderer для отрисовки сетки зрения
+            // Но нам нужно временно подменить контейнер или создать новый экземпляр
+            const tempRenderer = new ViewRenderer('bugViewGrid');
+            tempRenderer.renderGrid(bug.lastMemory.viewMap);
+        } else {
+            viewGridContainer.innerHTML = 'Нет данных о зрении';
+        }
         
         document.getElementById('logModal').style.display = 'block';
     }
