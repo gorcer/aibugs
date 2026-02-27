@@ -156,7 +156,7 @@ class FarmController {
             card.className = 'bug-card';
             
             const healthPct = u.current_health;
-            const energyPct = Math.min(100, (u.current_energy / 10000) * 100); // Упрощенная нормализация
+            const energyPct = Math.min(u.current_energy , 100); // Упрощенная нормализация
             const color = this.renderer.getUnitColor(u.uid);
 
             card.innerHTML = `
