@@ -11,6 +11,7 @@ class FarmBug {
         this.isProcessing = false;
         this.lastTurnN = 0;
         this.lastMemory = null;
+        this.experience = null;
         this.logs = [];
         this.totalCost = 0;
         this.responseTimes = [];
@@ -89,6 +90,10 @@ class FarmBug {
             let content = result.choices[0].message.content;
             content = content.replace(/```(?:json)?\n?([\s\S]*?)```/g, '$1').trim();
             const decision = JSON.parse(content);
+
+            if (decision.experience) {
+                this.experience = decision.experience;
+            }
 
             this.log(`Решение: ${decision.reason || 'без описания'} (Cost: $${cost.toFixed(6)})`);
 
@@ -222,8 +227,12 @@ class FarmController {
 
     showLog(uid) {
         const bug = this.bugs.get(uid);
-        const content = document.getElementById('logContent');
-        content.innerText = bug ? bug.logs.join('\n') : 'Лог пуст или AI не запущен для этого жука в этой сессии';
+        const logContent = document.getElementById('logContent');
+        const expContent = document.getElementById('experienceContent');
+        
+        logContent.innerText = bug ? bug.logs.join('\n') : 'Лог пуст или AI не запущен для этого жука в этой сессии';
+        expContent.innerText = (bug && bug.experience) ? bug.experience : 'Пока нет накопленного опыта...';
+        
         document.getElementById('logModal').style.display = 'block';
     }
 
