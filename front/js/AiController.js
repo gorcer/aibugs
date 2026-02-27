@@ -101,6 +101,11 @@ class AiController {
             const lastState = memory[memory.length - 1];
             if (!lastState) return;
 
+            if (lastState.brainSleeping) {
+                console.log(`Ход ${lastState.turnN}: Жук выполняет план (brainSleeping: true). Ждем.`);
+                return;
+            }
+
             this.lastTurnN = lastState.turnN;
             this.log(`Ход ${lastState.turnN}. Анализ памяти (${memory.length} зап.). Запрос к LLM...`);
             
@@ -155,17 +160,17 @@ ${JSON.stringify(memory, null, 2)}
             const content = result.choices[0].message.content;
             const decision = JSON.parse(content);
 
-            this.log(`LLM решила: ${content} (Cost: $${cost.toFixed(6)})`);
+            this.log(`LLM решила: ${decision.reason || content} (Cost: $${cost.toFixed(6)})`);
 
-            if (decision.actionId === 0) {
-                this.log("Действие IDLE (0): пропуск отправки на бэкенд.");
+            const plan = decision.plan || [];
+            if (plan.length === 0) {
+                this.log("План пуст: пропуск отправки на бэкенд.");
                 return;
             }
 
             await this.api.sendAction(this.currentUid, {
                 initTourN: this.lastTurnN,
-                actionId: decision.actionId,
-                payload: decision.payload || {}
+                actions: plan
             });
         } catch (e) {
             this.log(`Ошибка LLM: ${e.message}`);
