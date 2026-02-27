@@ -69,7 +69,7 @@ class GameEngine {
             
             const memoryRecord = {
                 turnN: world.currentTurn,
-                viewMap,
+                viewMap: JSON.parse(JSON.stringify(viewMap)), // Глубокое копирование для фиксации состояния
                 feeling,
                 lastAction: bug.lastActionResult || null,
                 brainSleeping: bug.brainSleeping

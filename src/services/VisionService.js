@@ -39,7 +39,7 @@ class VisionService {
                     let id = null;
                     if (cellContent) {
                         type = cellContent.constructor.name === 'Bug' ? 2 : 1;
-                        id = cellContent.uid || cellContent.id;
+                        id = cellContent.uid || cellContent.id || null;
                     }
                     // Относительные координаты: y=1 - клетка прямо перед жуком
                     // x < 0 - слева, x > 0 - справа
