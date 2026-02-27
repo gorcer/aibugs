@@ -20,7 +20,7 @@ class App {
 
     async refreshWorldMap() {
         try {
-            const data = await this.api.getAllUnits();
+            const data = await this.api.getWorldStat();
             this.renderer.renderWorldMap(
                 data.units, 
                 data.food, 
@@ -72,7 +72,7 @@ class App {
         this.lastTurnN = lastState.turnN;
         
         // Для обновления параметров юнита (HP, Energy) все равно нужен запрос списка юнитов
-        const unitsData = await this.api.getAllUnits();
+        const unitsData = await this.api.getWorldStat();
         const currentUnit = unitsData.units.find(u => u.uid === this.currentUid);
 
         this.renderer.renderStatus('status', lastState);
@@ -126,7 +126,7 @@ class App {
                 this.api.getWatch(this.currentUid),
                 this.api.getFeel(this.currentUid),
                 this.api.getMemory(this.currentUid),
-                this.api.getAllUnits()
+                this.api.getWorldStat()
             ]);
 
             const currentUnit = unitsData.units.find(u => u.uid === this.currentUid);

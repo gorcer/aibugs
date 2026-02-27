@@ -27,8 +27,8 @@ export class ApiService {
         return res.json();
     }
 
-    async getAllUnits() {
-        const res = await fetch(`${this.baseUrl}/units`);
+    async getWorldStat() {
+        const res = await fetch(`${this.baseUrl}/worldStat`);
         return res.json();
     }
 

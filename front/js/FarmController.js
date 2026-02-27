@@ -164,8 +164,13 @@ class FarmController {
     }
 
     async refreshList() {
-        const data = await this.api.getAllUnits();
+        const data = await this.api.getWorldStat();
         
+        // Обновление статистики мира
+        document.getElementById('statTurnN').innerText = data.turnN;
+        document.getElementById('statDecisionTime').innerText = data.decisionTime;
+        document.getElementById('statActivity').innerText = data.activityPercent;
+
         // Собираем планы всех активных жуков
         const allPlans = {};
         data.units.forEach(u => {
