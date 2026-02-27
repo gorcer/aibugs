@@ -128,6 +128,9 @@ ${JSON.stringify(memory, null, 2)}
 
 Проанализируй историю и текущее состояние. Твой ход.`;
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // Таймаут 30 секунд
+
         try {
             const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                 method: "POST",
@@ -142,8 +145,10 @@ ${JSON.stringify(memory, null, 2)}
                         {"role": "user", "content": userPrompt}
                     ],
                     "response_format": { "type": "json_object" }
-                })
+                }),
+                signal: controller.signal
             });
+            clearTimeout(timeoutId);
 
             const result = await response.json();
             
@@ -177,7 +182,11 @@ ${JSON.stringify(memory, null, 2)}
                 actions: plan
             });
         } catch (e) {
-            this.log(`Ошибка LLM: ${e.message}`);
+            if (e.name === 'AbortError') {
+                this.log('Ошибка LLM: Превышено время ожидания (Timeout)');
+            } else {
+                this.log(`Ошибка LLM: ${e.message}`);
+            }
         }
     }
 }
