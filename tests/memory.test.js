@@ -1,0 +1,135 @@
+const request = require('supertest');
+const express = require('express');
+const gameRoutes = require('../src/routes/gameRoutes');
+const world = require('../src/models/World');
+const gameEngine = require('../src/services/GameEngine');
+const ACTIONS = require('../src/constants/Actions');
+const Food = require('../src/models/Food');
+
+const app = express();
+app.use(express.json());
+app.use('/api', gameRoutes);
+
+describe('AiBugs Memory and brainSleeping Tests', () => {
+    beforeEach(() => {
+        world.initGrid();
+        world.bugs.clear();
+        world.food = [];
+        gameEngine.isRunning = true;
+    });
+
+    test('1) brainSleeping should become false when bug is bitten during a plan', async () => {
+        // Создаем жука-жертву с планом на 3 хода
+        const victimRes = await request(app)
+            .post('/api/addUnit')
+            .send({ name: 'Victim', x: 10, y: 10, angle: 0 });
+        const victimUid = victimRes.body.uid;
+        const victimBug = world.bugs.get(victimUid);
+
+        await request(app)
+            .post(`/api/action/${victimUid}`)
+            .send({
+                initTourN: world.currentTurn,
+                actions: [
+                    { actionId: ACTIONS.MOVE, payload: {} },
+                    { actionId: ACTIONS.MOVE, payload: {} },
+                    { actionId: ACTIONS.MOVE, payload: {} }
+                ]
+            });
+
+        expect(victimBug.brainSleeping).toBe(true);
+
+        // Ход 1: Жук начинает движение
+        gameEngine.tick();
+        expect(victimBug.brainSleeping).toBe(true);
+
+        // Создаем атакующего и кусаем жертву на 2-м ходу
+        const attackerRes = await request(app)
+            .post('/api/addUnit')
+            .send({ name: 'Attacker', x: victimBug.x + 1, y: victimBug.y, angle: 180 });
+        const attackerUid = attackerRes.body.uid;
+
+        await request(app)
+            .post(`/api/action/${attackerUid}`)
+            .send({
+                initTourN: world.currentTurn,
+                actions: [{ actionId: ACTIONS.BITE, payload: {} }]
+            });
+
+        // Ход 2: Атакующий кусает, план жертвы должен прерваться
+        gameEngine.tick();
+        
+        expect(victimBug.brainSleeping).toBe(false);
+        const lastMemory = victimBug.memory[victimBug.memory.length - 1];
+        expect(lastMemory.brainSleeping).toBe(false);
+    });
+
+    test('2) brainSleeping should become false if bite target disappears (Fail status)', async () => {
+        const bugRes = await request(app)
+            .post('/api/addUnit')
+            .send({ name: 'HungryBug', x: 20, y: 20, angle: 0 });
+        const bugUid = bugRes.body.uid;
+        const bug = world.bugs.get(bugUid);
+
+        // Ставим еду, которой хватит на 1 укус
+        const food = new Food(21, 20, 1);
+        world.food.push(food);
+        world.grid[21][20] = food;
+
+        // План: укусить 3 раза
+        await request(app)
+            .post(`/api/action/${bugUid}`)
+            .send({
+                initTourN: world.currentTurn,
+                actions: [
+                    { actionId: ACTIONS.BITE, payload: {} },
+                    { actionId: ACTIONS.BITE, payload: {} },
+                    { actionId: ACTIONS.BITE, payload: {} }
+                ]
+            });
+
+        // Ход 1: Ест еду, она исчезает
+        gameEngine.tick();
+        expect(bug.brainSleeping).toBe(true); 
+
+        // Ход 2: Пытается укусить пустую клетку -> Fail -> brainSleeping = false
+        gameEngine.tick();
+        expect(bug.brainSleeping).toBe(false);
+        const lastMemory = bug.memory[bug.memory.length - 1];
+        expect(lastMemory.lastAction.status).toBe('Fail');
+    });
+
+    test('3) brainSleeping should be true during plan and false after successful completion', async () => {
+        const bugRes = await request(app)
+            .post('/api/addUnit')
+            .send({ name: 'Walker', x: 30, y: 30, angle: 0 });
+        const bugUid = bugRes.body.uid;
+        const bug = world.bugs.get(bugUid);
+
+        await request(app)
+            .post(`/api/action/${bugUid}`)
+            .send({
+                initTourN: world.currentTurn,
+                actions: [
+                    { actionId: ACTIONS.MOVE, payload: {} },
+                    { actionId: ACTIONS.MOVE, payload: {} },
+                    { actionId: ACTIONS.MOVE, payload: {} }
+                ]
+            });
+
+        // Ход 1
+        gameEngine.tick();
+        expect(bug.brainSleeping).toBe(true);
+
+        // Ход 2
+        gameEngine.tick();
+        expect(bug.brainSleeping).toBe(true);
+
+        // Ход 3: Последнее действие выполнено
+        gameEngine.tick();
+        expect(bug.brainSleeping).toBe(false);
+        
+        const lastMemory = bug.memory[bug.memory.length - 1];
+        expect(lastMemory.brainSleeping).toBe(false);
+    });
+});
