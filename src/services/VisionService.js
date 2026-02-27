@@ -14,8 +14,8 @@ class VisionService {
         // В задаче: 10,11 (шаг 1), 9,12 10,12 11,12 (шаг 2) и т.д.
         
         for (let step = 1; step <= visible_range; step++) {
-            // На каждом шаге ширина области увеличивается
-            for (let side = -step + 1; side <= step - 1; side++) {
+            // На каждом шаге ширина области увеличивается, начиная с 3 клеток (side: -1, 0, 1)
+            for (let side = -step; side <= step; side++) {
                 let targetX = x;
                 let targetY = y;
 
