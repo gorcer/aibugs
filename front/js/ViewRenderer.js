@@ -13,7 +13,7 @@ export class ViewRenderer {
         return this.unitColors[uid];
     }
 
-    renderWorldMap(units, food, onUnitClick, onEmptyClick, onFoodClick) {
+    renderWorldMap(units, food, onUnitClick, onEmptyClick, onFoodClick, plans = {}) {
         const hasUnits = units && units.length > 0;
         const hasFood = food && food.length > 0;
 
@@ -38,6 +38,24 @@ export class ViewRenderer {
                 const td = document.createElement('td');
                 const unit = units ? units.find(u => u.x === x && u.y === y) : null;
                 const foodItem = food ? food.find(f => f.x === x && f.y === y) : null;
+                
+                // Проверка, входит ли клетка в чей-то план
+                let planHighlight = null;
+                for (const [uid, steps] of Object.entries(plans)) {
+                    const step = steps.find(s => s.x === x && s.y === y);
+                    if (step) {
+                        planHighlight = step;
+                        break;
+                    }
+                }
+
+                if (planHighlight) {
+                    td.style.backgroundColor = '#fff9c4'; // Желтый фон для плана
+                    if (planHighlight.type === 'bite') {
+                        td.innerText = '💢';
+                        td.style.fontSize = '10px';
+                    }
+                }
 
                 if (unit) {
                     td.className = 'type-2';

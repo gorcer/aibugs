@@ -10,6 +10,7 @@ class FarmBug {
         this.socket = null;
         this.isProcessing = false;
         this.lastTurnN = 0;
+        this.lastMemory = null;
         this.logs = [];
         this.totalCost = 0;
         this.responseTimes = [];
@@ -29,10 +30,13 @@ class FarmBug {
         this.socket = new WebSocket(wsUrl);
 
         this.socket.onmessage = async (event) => {
-            if (this.isProcessing) return;
             const memory = JSON.parse(event.data);
             const lastState = memory[memory.length - 1];
-            if (!lastState || lastState.brainSleeping) return;
+            if (!lastState) return;
+            
+            this.lastMemory = lastState;
+
+            if (this.isProcessing || lastState.brainSleeping) return;
 
             this.lastTurnN = lastState.turnN;
             this.isProcessing = true;
@@ -153,6 +157,18 @@ class FarmController {
     async refreshList() {
         const data = await this.api.getAllUnits();
         
+        // Собираем планы всех активных жуков
+        const allPlans = {};
+        data.units.forEach(u => {
+            const bug = this.bugs.get(u.uid);
+            if (bug && bug.lastMemory && bug.lastMemory.feeling) {
+                const planData = bug.lastMemory.feeling.find(f => f.currentPlan);
+                if (planData && planData.currentPlan.length > 0) {
+                    allPlans[u.uid] = this.calculatePlanPath(u.x, u.y, u.angle, planData.currentPlan);
+                }
+            }
+        });
+
         // Отрисовка карты
         this.renderer.renderWorldMap(
             data.units, 
@@ -163,7 +179,8 @@ class FarmController {
                 document.getElementById('x').value = x;
                 document.getElementById('y').value = y;
             },
-            (food) => console.log('Food:', food)
+            (food) => console.log('Food:', food),
+            allPlans
         );
 
         const container = document.getElementById('bugList');
@@ -220,6 +237,35 @@ class FarmController {
             }
             this.refreshList();
         }
+    }
+}
+
+    calculatePlanPath(startX, startY, startAngle, plan) {
+        const path = [];
+        let curX = startX;
+        let curY = startY;
+        let curAngle = startAngle;
+
+        plan.forEach(step => {
+            if (step.actionId === 1) { // MOVE
+                if (curAngle === 0) curX++;
+                else if (curAngle === 90) curY++;
+                else if (curAngle === 180) curX--;
+                else if (curAngle === 270) curY--;
+                path.push({ x: curX, y: curY, type: 'move' });
+            } else if (step.actionId === 2) { // ROTATE
+                const rotate = step.payload?.angle || 90;
+                curAngle = (curAngle + rotate + 360) % 360;
+            } else if (step.actionId === 3) { // BITE
+                let bx = curX, by = curY;
+                if (curAngle === 0) bx++;
+                else if (curAngle === 90) by++;
+                else if (curAngle === 180) bx--;
+                else if (curAngle === 270) by--;
+                path.push({ x: bx, y: by, type: 'bite' });
+            }
+        });
+        return path;
     }
 }
 
