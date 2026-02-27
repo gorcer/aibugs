@@ -148,9 +148,15 @@ ${JSON.stringify(memory, null, 2)}
                 }),
                 signal: controller.signal
             });
-            clearTimeout(timeoutId);
 
-            const result = await response.json();
+            // Используем Promise.race для таймаута на чтение JSON
+            const result = await Promise.race([
+                response.json(),
+                new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Timeout reading response')), 25000)
+                )
+            ]);
+            clearTimeout(timeoutId);
             
             if (result.error) {
                 throw new Error(`OpenRouter Error: ${result.error.message}`);

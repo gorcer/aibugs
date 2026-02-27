@@ -63,8 +63,14 @@ class FarmBug {
                 }),
                 signal: controller.signal
             });
+
+            const result = await Promise.race([
+                response.json(),
+                new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Timeout reading response')), 25000)
+                )
+            ]);
             clearTimeout(timeoutId);
-            const result = await response.json();
             if (result.error) throw new Error(result.error.message);
 
             const cost = result.usage?.cost || 0;
