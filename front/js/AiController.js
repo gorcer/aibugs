@@ -165,8 +165,12 @@ ${JSON.stringify(memory, null, 2)}
             let content = result.choices[0].message.content;
             
             // Очистка от Markdown блоков ```json ... ```
-            content = content.replace(/```json\n?|```/g, '').trim();
-            
+            // content = content.replace(/```json\n?|```/g, '').trim();
+            content = content
+                .replace(/^```json\n?/, '')  // Удаляем открывающий тег
+                .replace(/\n```$/, '')       // Удаляем закрывающий тег
+                .trim();
+
             const decision = JSON.parse(content);
 
             this.log(`LLM решила: ${decision.reason || content} (Cost: $${cost.toFixed(6)})`);
