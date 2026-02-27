@@ -172,7 +172,23 @@ class GameEngine {
     }
 
     updateTurnTime() {
-        // Логика изменения decisionTime (1-30 сек) в зависимости от активности
+        const totalBugs = world.bugs.size;
+        if (totalBugs > 0) {
+            const activeBugs = Array.from(world.bugs.values()).filter(bug => 
+                bug.is_live && (bug.lastActionTurn === world.currentTurn || bug.actionQueue.length > 0)
+            ).length;
+
+            const activityPercent = (activeBugs / totalBugs) * 100;
+
+            if (activityPercent < 100) {
+                // Увеличиваем время на 10%, если не все успели
+                world.decisionTime = Math.min(30, world.decisionTime * 1.1);
+            } else {
+                // Сокращаем время на 10%, если успели все
+                world.decisionTime = Math.max(1, world.decisionTime * 0.9);
+            }
+        }
+
         world.turnEndTime = Date.now() + (world.decisionTime * 1000);
     }
 }
