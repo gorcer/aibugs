@@ -176,11 +176,18 @@ class FarmController {
             const healthPct = u.current_health;
             const energyPct = Math.min(u.current_energy , 100); // Упрощенная нормализация
             const color = this.renderer.getUnitColor(u.uid);
+            
+            const bug = this.bugs.get(u.uid);
+            let avgTime = '0';
+            if (bug && bug.responseTimes.length > 0) {
+                const sum = bug.responseTimes.reduce((a, b) => a + b, 0);
+                avgTime = (sum / bug.responseTimes.length / 1000).toFixed(2);
+            }
 
             card.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <div style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 1px solid #999;"></div>
-                    <div><strong>${u.name}</strong><br><small>${u.uid.slice(0,8)}</small></div>
+                    <div><strong>${u.name}</strong><br><small>LLM: ${avgTime}s</small></div>
                 </div>
                 <div>Возраст: ${u.age || '?'}</div>
                 <div class="bar-container"><div class="bar health-bar" style="width:${healthPct}%"></div><div class="bar-text">HP: ${healthPct}%</div></div>
