@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Bug Farm</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .bug-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 10px; display: grid; grid-template-columns: 1fr 1fr 2fr 2fr 1fr 1fr; gap: 15px; align-items: center; }
+        .bar-container { background: #eee; height: 20px; border-radius: 10px; overflow: hidden; position: relative; }
+        .bar { height: 100%; transition: width 0.3s; }
+        .health-bar { background: #28a745; }
+        .energy-bar { background: #007bff; }
+        .bar-text { position: absolute; width: 100%; text-align: center; font-size: 12px; line-height: 20px; color: #000; font-weight: bold; }
+        button { padding: 8px 12px; cursor: pointer; border: none; border-radius: 4px; }
+        .btn-add { background: #28a745; color: white; font-size: 16px; }
+        .btn-log { background: #17a2b8; color: white; }
+        .btn-del { background: #dc3545; color: white; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; margin: 5% auto; padding: 20px; width: 80%; max-height: 80%; overflow-y: auto; border-radius: 8px; }
+        #logContent { background: #1e1e1e; color: #00ff00; padding: 15px; font-family: monospace; white-space: pre-wrap; }
+        
+        .form-container { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: none; border: 1px solid #ddd; }
+        .form-group { margin-bottom: 10px; }
+        input, textarea { width: 100%; padding: 8px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Жучиная ферма</h1>
+        <button class="btn-add" onclick="document.getElementById('addForm').style.display='block'">+ Добавить жука</button>
+    </div>
+
+    <div id="addForm" class="form-container">
+        <h3>Новый подопытный</h3>
+        <div class="form-group"><input type="password" id="apiKey" placeholder="OpenRouter API Key"></div>
+        <div class="form-group"><input type="text" id="model" value="arcee-ai/trinity-large-preview:free"></div>
+        <div class="form-group"><textarea id="systemPrompt" rows="3">Ты — мозг жука. Выживай и ешь. Отвечай JSON: {plan: [{actionId, payload}], reason}</textarea></div>
+        <div style="display: flex; gap: 10px;" class="form-group">
+            <input type="text" id="name" value="Farm_Bug">
+            <input type="number" id="x" value="0">
+            <input type="number" id="y" value="0">
+        </div>
+        <button class="btn-add" id="confirmAdd">Создать и запустить AI</button>
+        <button onclick="document.getElementById('addForm').style.display='none'">Отмена</button>
+    </div>
+
+    <div id="bugList"></div>
+
+    <div id="logModal" class="modal">
+        <div class="modal-content">
+            <span style="float:right; cursor:pointer; font-size:24px;" onclick="document.getElementById('logModal').style.display='none'">&times;</span>
+            <h3>Лог жука</h3>
+            <div id="logContent"></div>
+        </div>
+    </div>
+
+    <script type="module" src="js/FarmController.js"></script>
+</body>
+</html>

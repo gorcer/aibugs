@@ -40,4 +40,11 @@ export class ApiService {
         });
         return res.json();
     }
+
+    async deleteUnit(uid) {
+        const res = await fetch(`${this.baseUrl}/unit/${uid}`, {
+            method: 'DELETE'
+        });
+        return res.json();
+    }
 }
