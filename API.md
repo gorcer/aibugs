@@ -116,12 +116,14 @@
       "turnN": 41,
       "viewMap": [...],
       "feeling": [...],
-      "lastAction": { "actionId": 1, "status": "OK" }
+      "lastAction": { "actionId": 1, "status": "OK" },
+      "brainSleeping": true
     }
   ]
 }
 ```
 * `lastAction`: результат выполнения действия в этом ходу. `status` может быть `OK` или `Fail`.
+* `brainSleeping`: `true`, если жук в данный момент выполняет запланированный список действий. Становится `false`, если план пуст, прерван ошибкой или жука укусили.
 
 ---
 
@@ -140,7 +142,8 @@
     "turnN": 42,
     "viewMap": [...],
     "feeling": [...],
-    "lastAction": { "actionId": 1, "status": "OK" }
+    "lastAction": { "actionId": 1, "status": "OK" },
+    "brainSleeping": true
   },
   ...
 ]
