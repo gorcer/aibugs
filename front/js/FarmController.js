@@ -112,6 +112,9 @@ class FarmController {
 
     async init() {
         document.getElementById('confirmAdd').addEventListener('click', () => this.addBug());
+        document.getElementById('model').addEventListener('input', (e) => {
+            document.getElementById('name').value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
+        });
         setInterval(() => this.refreshList(), 2000);
         this.refreshList();
     }

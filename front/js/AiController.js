@@ -13,6 +13,9 @@ class AiController {
         this.startBtn = document.getElementById('startBtn');
         
         this.startBtn.addEventListener('click', () => this.start());
+        document.getElementById('model').addEventListener('input', (e) => {
+            document.getElementById('name').value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
+        });
     }
 
     log(msg) {
