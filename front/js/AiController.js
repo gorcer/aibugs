@@ -197,7 +197,7 @@ ${JSON.stringify(memory, null, 2)}
         } catch (e) {
             if (e.name === 'AbortError' || e.message === 'Timeout reading response') {
                 this.log(`Ошибка LLM: Превышено время ожидания (Попытка ${retryCount + 1}/5).`);
-                if (retryCount < 4) {
+                if (retryCount < 10) {
                     this.log('Повторная попытка запроса...');
                     return await this.getLlmDecision(memory, retryCount + 1);
                 }

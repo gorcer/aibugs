@@ -4,7 +4,7 @@ class World {
         this.height = 60;
         this.decisionTime = 5; // секунды
         this.turnEndTime = Date.now() + (this.decisionTime * 1000);
-        this.feedCount = 10;
+        this.feedCount = 60;
         this.feedAmount = 1000;
         this.subtractFeedPerTurn = 1;
         

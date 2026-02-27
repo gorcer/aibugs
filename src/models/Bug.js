@@ -28,7 +28,7 @@ class Bug {
         this.feed_speed = 10;
         this.visible_range = 5; // дефолтное значение
         this.age = 0;
-        this.memory_limit = 10;
+        this.memory_limit = 500;
         this.is_live = true;
         this.is_visible = true;
         this.weight = 100;

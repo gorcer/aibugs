@@ -73,9 +73,10 @@ class GameController {
             x: bug.x,
             y: bug.y,
             angle: bug.angle,
+            age: bug.age,
             is_live: bug.is_live,
-            current_health: bug.current_health,
-            current_energy: bug.current_energy
+            current_health: 100 * (bug.current_health / bug.max_health),
+            current_energy: 100 * (bug.current_energy / bug.max_energy)
         }));
         const food = world.food.map(f => ({
             x: f.x,
