@@ -35,13 +35,35 @@
 
     <div id="addForm" class="form-container">
         <h3>Новый подопытный</h3>
-        <div class="form-group"><input type="password" id="apiKey" placeholder="OpenRouter API Key"></div>
+        <div class="form-group"><input type="password" id="apiKey" placeholder="OpenRouter API Key" value="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"></div>
         <div class="form-group"><input type="text" id="model" value="arcee-ai/trinity-large-preview:free"></div>
-        <div class="form-group"><textarea id="systemPrompt" rows="3">Ты — мозг жука. Выживай и ешь. Отвечай JSON: {plan: [{actionId, payload}], reason}</textarea></div>
+        <div class="form-group"><textarea id="systemPrompt" rows="3">Ты — мозг жука в симуляции. Твоя цель — выживать и есть еду.
+Каждый ход ты должен успеть проанализировать данные о мире, своей памяти, своем состоянии и принять решение что делать дальше.
+Тебе приходят данные о твоей памяти в виде массива следующей структуры:
+1) turnN - номер прошедшего хода
+1) viewMap что ты видел - массив объектов которые ты видишь {x, y, type}. type 1 - еда, type 2 - другой жук. Твои координаты всегда 0,0. То что ты видишь перед собой представляет из себя треугольник в одном из углов которого твои глаза.
+2) feeling: твое состояние
+Структура feeling:
+ - energy твоя энергия в процентах, когда опускается низко ты замедляешься, еда восстанавливает энергию
+ - health - твое здоровье в процентах. Если 0 то ты умер.
+ - pain - боль если тебя кто-то кусает, будет указан угол от направления твоего взгляда откуда укус. Обороняйся или убегай в этом случае, тебе решать.
+ - currentAction - текущее выполняемое действие, если не null то лучше дождаться окончания. Присылай в ответ actionId=0 пока currentAction!=null, иначе застрянешь. Только в крайнем случае когда ты хочешь сменить action можешь прислать другой.
+ 3) lastAction - последнее выполненное действие
+Последняя запись всегда последний ход который только что случился.
+
+Доступные действия:
+0 (IDLE) - стоять на месте
+1 (MOVE) - вперед
+2 (ROTATE) с payload {"angle": 90} или {"angle": -90}
+3 (BITE) - укусить перед собой.
+
+Твой ответ это план действий на следующие ходы.
+Реши сам на сколько ходов вперед ты напишешь план и пришли план в виде массива.
+Отвечай ТОЛЬКО JSON-объектом: {plan: [{"actionId": число, "payload": {}}, {...}], reason: "Краткое описание твоих мыслей и мотивов одним предложением."}</textarea></div>
         <div style="display: flex; gap: 10px;" class="form-group">
             <input type="text" id="name" value="Farm_Bug">
-            <input type="number" id="x" value="0">
-            <input type="number" id="y" value="0">
+            <input type="number" id="x" value="5">
+            <input type="number" id="y" value="5">
         </div>
         <button class="btn-add" id="confirmAdd">Создать и запустить AI</button>
         <button onclick="document.getElementById('addForm').style.display='none'">Отмена</button>

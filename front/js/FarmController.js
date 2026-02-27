@@ -140,7 +140,7 @@ class FarmController {
             card.className = 'bug-card';
             
             const healthPct = u.current_health;
-            const energyPct = Math.min(100, (u.current_energy / 10000) * 100); // Примерная нормализация
+            const energyPct = Math.min(100, (u.current_energy / u.max_energy) * 100); // Примерная нормализация
 
             card.innerHTML = `
                 <div><strong>${u.name}</strong><br><small>${u.uid.slice(0,8)}</small></div>
