@@ -27,13 +27,13 @@ class GameController {
 
     action(req, res) {
         const { unitUid } = req.params;
-        const { initTourN, actionId, payload } = req.body;
+        const { initTourN, actions } = req.body;
         const bug = world.bugs.get(unitUid);
         if (!bug) return res.status(404).json({ error: 'Bug not found' });
 
         try {
-            actionService.addAction(bug, initTourN, actionId, payload);
-            res.json({ status: 'queued' });
+            actionService.addAction(bug, initTourN, actions);
+            res.json({ status: 'plan_accepted', queueLength: bug.actionQueue.length });
         } catch (error) {
             res.status(400).json({ error: error.message });
         }

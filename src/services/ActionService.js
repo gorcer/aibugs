@@ -4,21 +4,26 @@ const ACTIONS = require('../constants/Actions');
 
 class ActionService {
     /**
-     * Добавляет действие в очередь жука
+     * Устанавливает план действий для жука (перезаписывает текущую очередь)
      */
-    addAction(bug, initTurnN, actionId, payload = {}) {
-        if (bug.lastActionTurn === initTurnN) {
-            throw new Error('Action already planned for this turn');
+    addAction(bug, initTurnN, actions) {
+        if (!Array.isArray(actions)) {
+            throw new Error('Actions must be an array');
         }
 
-        const action = {
+        if (actions.length > bug.memory_limit) {
+            throw new Error(`Too many actions. Max limit is ${bug.memory_limit}`);
+        }
+
+        // Перезаписываем очередь новым планом
+        bug.actionQueue = actions.map(a => ({
             initTurnN,
-            actionId,
-            payload,
+            actionId: a.actionId,
+            payload: a.payload || {},
             status: 'pending',
             progress: 0
-        };
-        bug.actionQueue.push(action);
+        }));
+        
         bug.lastActionTurn = initTurnN;
     }
 
