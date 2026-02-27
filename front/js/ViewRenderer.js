@@ -1,6 +1,16 @@
 export class ViewRenderer {
     constructor(containerId) {
         this.container = document.getElementById(containerId);
+        this.unitColors = JSON.parse(localStorage.getItem('unitColors') || '{}');
+    }
+
+    getUnitColor(uid) {
+        if (!this.unitColors[uid]) {
+            const hue = Math.floor(Math.random() * 360);
+            this.unitColors[uid] = `hsl(${hue}, 70%, 80%)`;
+            localStorage.setItem('unitColors', JSON.stringify(this.unitColors));
+        }
+        return this.unitColors[uid];
     }
 
     renderWorldMap(units, food, onUnitClick, onEmptyClick, onFoodClick) {
@@ -32,6 +42,7 @@ export class ViewRenderer {
                 if (unit) {
                     td.className = 'type-2';
                     td.style.cursor = 'pointer';
+                    td.style.backgroundColor = this.getUnitColor(unit.uid);
                     let arrow = '→';
                     if (unit.angle === 90) arrow = '↓';
                     else if (unit.angle === 180) arrow = '←';
