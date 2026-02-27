@@ -32,7 +32,7 @@ describe('AiBugs Movement Mechanics Tests', () => {
 
         const initialX = bug.x;
 
-        // Тик 1: прогресс 0.5
+        // Тик 1: прогресс 0.5 (так как speed_multiply_on_low_energy = 0.5)
         gameEngine.tick();
         expect(bug.x).toBe(initialX);
         expect(bug.actionQueue.length).toBe(1);

@@ -117,13 +117,13 @@ describe('AiBugs Memory and brainSleeping Tests', () => {
                 ]
             });
 
-        // Ход 1
+        // Ход 1: В очереди 3 действия -> выполнили 1, осталось 2. brainSleeping = true (2 > 1)
         gameEngine.tick();
         expect(bug.brainSleeping).toBe(true);
 
-        // Ход 2
+        // Ход 2: В очереди 2 действия -> выполнили 1, осталось 1. brainSleeping = false (1 не > 1)
         gameEngine.tick();
-        expect(bug.brainSleeping).toBe(true);
+        expect(bug.brainSleeping).toBe(false);
 
         // Ход 3: Последнее действие выполнено
         gameEngine.tick();

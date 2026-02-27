@@ -17,7 +17,7 @@ class Bug {
         this.energy_consumption_per_cell = 2;
         this.energy_consumption_per_degree = 0.1;
         this.energy_consumption_per_turn = 1;
-        this.speed_multiply_on_low_energy = 1; // глючит
+        this.speed_multiply_on_low_energy = 0.5;
         this.max_health = 100;
         this.health_subtract_on_low_energy_per_turn = 1;
         this.health_increase_on_high_energy_per_turn = 1;
