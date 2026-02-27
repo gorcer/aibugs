@@ -12,6 +12,7 @@ class FarmBug {
         this.lastTurnN = 0;
         this.logs = [];
         this.totalCost = 0;
+        this.responseTimes = [];
         this.connect();
     }
 
@@ -44,6 +45,7 @@ class FarmBug {
     }
 
     async getLlmDecision(memory, retryCount = 0) {
+        const startTime = Date.now();
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 30000);
         try {
@@ -72,6 +74,10 @@ class FarmBug {
             ]);
             clearTimeout(timeoutId);
             if (result.error) throw new Error(result.error.message);
+
+            const duration = Date.now() - startTime;
+            this.responseTimes.push(duration);
+            if (this.responseTimes.length > 50) this.responseTimes.shift();
 
             const cost = result.usage?.cost || 0;
             this.totalCost += cost;
