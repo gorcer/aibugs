@@ -40,9 +40,9 @@ class VisionService {
                         type = cellContent.constructor.name === 'Bug' ? 2 : 1;
                     }
                     // Относительные координаты: y=1 - клетка прямо перед жуком
-                    // Инвертируем side для корректного отображения право/лево
+                    // x < 0 - слева, x > 0 - справа
                     if (type !== 0) {
-                        viewMap.push({ x: -side, y: step, type });
+                        viewMap.push({ x: side, y: step, type });
                     }
                 }
             }
