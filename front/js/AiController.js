@@ -157,7 +157,11 @@ ${JSON.stringify(memory, null, 2)}
                 document.getElementById('totalCost').innerText = this.totalCost.toFixed(6);
             }
 
-            const content = result.choices[0].message.content;
+            let content = result.choices[0].message.content;
+            
+            // Очистка от Markdown блоков ```json ... ```
+            content = content.replace(/```json\n?|```/g, '').trim();
+            
             const decision = JSON.parse(content);
 
             this.log(`LLM решила: ${decision.reason || content} (Cost: $${cost.toFixed(6)})`);
