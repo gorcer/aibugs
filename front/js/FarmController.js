@@ -12,6 +12,7 @@ class FarmBug {
         this.lastTurnN = 0;
         this.lastMemory = null;
         this.experience = null;
+        this.mood = null;
         this.logs = [];
         this.totalCost = 0;
         this.responseTimes = [];
@@ -93,6 +94,9 @@ class FarmBug {
 
             if (decision.experience) {
                 this.experience = decision.experience;
+            }
+            if (decision.mood) {
+                this.mood = decision.mood;
             }
 
             this.log(`Решение: ${decision.reason || 'без описания'} (Cost: $${cost.toFixed(6)})`);
@@ -209,7 +213,7 @@ class FarmController {
             card.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <div style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 1px solid #999;"></div>
-                    <div><strong>${u.name}</strong><br><small>LLM: ${avgTime}s</small></div>
+                    <div><strong>${u.name} ${bug?.mood || ''}</strong><br><small>LLM: ${avgTime}s</small></div>
                 </div>
                 <div>Возраст: ${u.age || '?'}</div>
                 <div class="bar-container"><div class="bar health-bar" style="width:${healthPct}%"></div><div class="bar-text">HP: ${healthPct}%</div></div>
