@@ -56,6 +56,16 @@ class GameController {
         res.json({ memory: bug.memory });
     }
 
+    deleteUnit(req, res) {
+        const { unitUid } = req.params;
+        const bug = world.bugs.get(unitUid);
+        if (!bug) return res.status(404).json({ error: 'Bug not found' });
+
+        world.grid[bug.x][bug.y] = null;
+        world.bugs.delete(unitUid);
+        res.json({ status: 'deleted', uid: unitUid });
+    }
+
     getAllUnits(req, res) {
         const units = Array.from(world.bugs.values()).map(bug => ({
             uid: bug.uid,
