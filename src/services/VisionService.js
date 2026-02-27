@@ -36,13 +36,15 @@ class VisionService {
                 if (targetX >= 0 && targetX < world.width && targetY >= 0 && targetY < world.height) {
                     const cellContent = world.grid[targetX][targetY];
                     let type = 0; // пусто
+                    let id = null;
                     if (cellContent) {
                         type = cellContent.constructor.name === 'Bug' ? 2 : 1;
+                        id = cellContent.uid || cellContent.id;
                     }
                     // Относительные координаты: y=1 - клетка прямо перед жуком
                     // x < 0 - слева, x > 0 - справа
                     if (type !== 0) {
-                        viewMap.push({ x: side, y: step, type });
+                        viewMap.push({ x: side, y: step, type, id });
                     }
                 }
             }
