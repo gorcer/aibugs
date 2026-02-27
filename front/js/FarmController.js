@@ -64,7 +64,7 @@ class FarmBug {
                     "model": this.config.model,
                     "messages": [
                         {"role": "system", "content": this.config.systemPrompt},
-                        {"role": "user", "content": `История: ${JSON.stringify(memory)}`}
+                        {"role": "user", "content": `Твой текущий опыт: ${this.experience || 'пока отсутствует'}\n\nИстория последних ходов: ${JSON.stringify(memory)}`}
                     ],
                     "response_format": { "type": "json_object" }
                 }),
