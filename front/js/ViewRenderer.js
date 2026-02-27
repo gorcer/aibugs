@@ -42,7 +42,7 @@ export class ViewRenderer {
                 if (unit) {
                     td.className = 'type-2';
                     td.style.cursor = 'pointer';
-                    td.style.backgroundColor = this.getUnitColor(unit.uid);
+                    td.style.backgroundColor = unit.current_health <= 0 ? '#ccc' : this.getUnitColor(unit.uid);
                     let arrow = '→';
                     if (unit.angle === 90) arrow = '↓';
                     else if (unit.angle === 180) arrow = '←';
@@ -52,6 +52,7 @@ export class ViewRenderer {
                     td.onclick = () => onUnitClick(unit.uid);
                 } else if (foodItem) {
                     td.className = 'type-1';
+                    td.style.backgroundColor = '#90ee90';
                     td.innerText = 'F';
                     td.title = `Food: ${foodItem.amount}`;
                     td.style.cursor = 'pointer';
