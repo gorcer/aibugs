@@ -1,4 +1,5 @@
 import { ApiService } from './ApiService.js';
+import { ViewRenderer } from './ViewRenderer.js';
 
 class FarmBug {
     constructor(uid, config, api, onLog) {
@@ -95,6 +96,7 @@ class FarmBug {
 class FarmController {
     constructor() {
         this.api = new ApiService();
+        this.renderer = new ViewRenderer('worldMapContainer');
         this.bugs = new Map(); // uid -> FarmBug
         this.init();
     }
@@ -132,6 +134,20 @@ class FarmController {
 
     async refreshList() {
         const data = await this.api.getAllUnits();
+        
+        // Отрисовка карты
+        this.renderer.renderWorldMap(
+            data.units, 
+            data.food, 
+            (uid) => this.showLog(uid),
+            (x, y) => {
+                document.getElementById('addForm').style.display = 'block';
+                document.getElementById('x').value = x;
+                document.getElementById('y').value = y;
+            },
+            (food) => console.log('Food:', food)
+        );
+
         const container = document.getElementById('bugList');
         container.innerHTML = '';
 
@@ -140,10 +156,14 @@ class FarmController {
             card.className = 'bug-card';
             
             const healthPct = u.current_health;
-            const energyPct = Math.min(100, (u.current_energy / u.max_energy) * 100); // Примерная нормализация
+            const energyPct = Math.min(100, (u.current_energy / 10000) * 100); // Упрощенная нормализация
+            const color = this.renderer.getUnitColor(u.uid);
 
             card.innerHTML = `
-                <div><strong>${u.name}</strong><br><small>${u.uid.slice(0,8)}</small></div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 1px solid #999;"></div>
+                    <div><strong>${u.name}</strong><br><small>${u.uid.slice(0,8)}</small></div>
+                </div>
                 <div>Возраст: ${u.age || '?'}</div>
                 <div class="bar-container"><div class="bar health-bar" style="width:${healthPct}%"></div><div class="bar-text">HP: ${healthPct}%</div></div>
                 <div class="bar-container"><div class="bar energy-bar" style="width:${energyPct}%"></div><div class="bar-text">EN: ${u.current_energy}</div></div>
