@@ -11,6 +11,12 @@ app.use(express.json());
 app.use('/api', gameRoutes);
 
 describe('AiBugs Bite Interaction Tests', () => {
+    beforeEach(() => {
+        world.initGrid();
+        world.bugs.clear();
+        world.food = [];
+    });
+
     test('Bite action - should decrease victim health/weight and increase attacker energy', async () => {
         const attackerRes = await request(app)
             .post('/api/addUnit')
