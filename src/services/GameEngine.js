@@ -118,7 +118,12 @@ class GameEngine {
         }
 
         if (bug.actionQueue.length > 0) {
-            feelings.push({ currentAction: bug.actionQueue[0].actionId });
+            feelings.push({ 
+                currentPlan: bug.actionQueue.map(a => ({ 
+                    actionId: a.actionId, 
+                    payload: a.payload 
+                })) 
+            });
         }
         
         return feelings;

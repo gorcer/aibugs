@@ -25,7 +25,8 @@ class ActionService {
         }));
         
         bug.lastActionTurn = initTurnN;
-        bug.brainSleeping = bug.actionQueue.length > 0;
+        // brainSleeping становится true, если в плане больше одного действия
+        bug.brainSleeping = bug.actionQueue.length > 1;
     }
 
     /**
@@ -43,10 +44,8 @@ class ActionService {
             const action = bug.actionQueue[0];
             this.executeAction(bug, action);
 
-            // Если после выполнения действия очередь опустела, выключаем сон
-            if (bug.actionQueue.length === 0) {
-                bug.brainSleeping = false;
-            }
+            // brainSleeping становится true только если в очереди осталось больше одного действия
+            bug.brainSleeping = bug.actionQueue.length > 1;
         });
     }
 
