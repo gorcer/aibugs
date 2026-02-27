@@ -7,7 +7,7 @@ router.get('/watch/:unitUid', gameController.watch);
 router.post('/action/:unitUid', gameController.action);
 router.get('/feel/:unitUid', gameController.feel);
 router.get('/memory/:unitUid', gameController.memory);
-router.get('/units', gameController.getAllUnits);
+router.get('/worldStat', gameController.getAllUnits);
 router.delete('/unit/:unitUid', gameController.deleteUnit);
 
 module.exports = router;

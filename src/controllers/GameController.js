@@ -67,6 +67,16 @@ class GameController {
     }
 
     getAllUnits(req, res) {
+        const totalBugs = world.bugs.size;
+        let activityPercent = 0;
+        
+        if (totalBugs > 0) {
+            const activeBugs = Array.from(world.bugs.values()).filter(bug => 
+                bug.is_live && (bug.lastActionTurn === world.currentTurn || bug.actionQueue.length > 0)
+            ).length;
+            activityPercent = (activeBugs / totalBugs) * 100;
+        }
+
         const units = Array.from(world.bugs.values()).map(bug => ({
             uid: bug.uid,
             name: bug.name,
@@ -78,13 +88,21 @@ class GameController {
             current_health: 100 * (bug.current_health / bug.max_health),
             current_energy: 100 * (bug.current_energy / bug.max_energy)
         }));
+
         const food = world.food.map(f => ({
             x: f.x,
             y: f.y,
             amount: f.amount,
             type: f.type
         }));
-        res.json({ units, food });
+
+        res.json({ 
+            units, 
+            food,
+            turnN: world.currentTurn,
+            decisionTime: world.decisionTime,
+            activityPercent: activityPercent
+        });
     }
 }
 
