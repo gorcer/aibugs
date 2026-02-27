@@ -1,11 +1,11 @@
 class World {
     constructor() {
-        this.width = 100;
-        this.height = 100;
-        this.decisionTime = 10; // секунды
+        this.width = 60;
+        this.height = 60;
+        this.decisionTime = 5; // секунды
         this.turnEndTime = Date.now() + (this.decisionTime * 1000);
-        this.feedCount = 100;
-        this.feedAmount = 1000000;
+        this.feedCount = 10;
+        this.feedAmount = 1000;
         this.subtractFeedPerTurn = 1;
         
         this.currentTurn = 0;
