@@ -127,21 +127,27 @@ export class ViewRenderer {
     }
 
     renderGrid(viewMap) {
-        // Добавляем самого жука в точку (0,0) для визуализации центра
-        const cells = [...(viewMap || []), { x: 0, y: 0, type: 'self' }];
+        // Поворачиваем сетку: исходный X (вперед) становится горизонталью (колонки),
+        // исходный Y (бок) становится вертикалью (строки).
+        const cells = [...(viewMap || []), { x: 0, y: 0, type: 'self' }].map(c => ({
+            ...c,
+            tx: c.x, // Табличный X
+            ty: c.y  // Табличный Y
+        }));
 
         this.container.innerHTML = '';
-        const minX = Math.min(...cells.map(c => c.x));
-        const maxX = Math.max(...cells.map(c => c.x));
-        const minY = Math.min(...cells.map(c => c.y));
-        const maxY = Math.max(...cells.map(c => c.y));
+        const minX = Math.min(...cells.map(c => c.tx));
+        const maxX = Math.max(...cells.map(c => c.tx));
+        const minY = Math.min(...cells.map(c => c.ty));
+        const maxY = Math.max(...cells.map(c => c.ty));
 
         const table = document.createElement('table');
+        // Внешний цикл по Y (строки), внутренний по X (колонки)
         for (let y = minY; y <= maxY; y++) {
             const tr = document.createElement('tr');
             for (let x = minX; x <= maxX; x++) {
                 const td = document.createElement('td');
-                const cell = cells.find(c => c.x === x && c.y === y);
+                const cell = cells.find(c => c.tx === x && c.ty === y);
                 
                 if (cell) {
                     if (cell.type === 'self') {
