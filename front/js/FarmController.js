@@ -238,7 +238,6 @@ class FarmController {
             this.refreshList();
         }
     }
-}
 
     calculatePlanPath(startX, startY, startAngle, plan) {
         const path = [];
