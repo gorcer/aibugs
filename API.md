@@ -94,7 +94,10 @@
     {"energy": 100},
     {"health": 100},
     {"pain": 90},
-    {"currentAction": 1}
+    {"currentPlan": [
+      { "actionId": 1, "payload": {} },
+      { "actionId": 2, "payload": { "angle": 90 } }
+    ]}
   ]
 }
 ```
