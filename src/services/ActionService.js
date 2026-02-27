@@ -42,6 +42,11 @@ class ActionService {
 
             const action = bug.actionQueue[0];
             this.executeAction(bug, action);
+
+            // Если после выполнения действия очередь опустела, выключаем сон
+            if (bug.actionQueue.length === 0) {
+                bug.brainSleeping = false;
+            }
         });
     }
 
