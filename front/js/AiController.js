@@ -118,7 +118,7 @@ class AiController {
         };
     }
 
-    async getLlmDecision(memory) {
+    async getLlmDecision(memory, retryCount = 0) {
         const apiKey = document.getElementById('apiKey').value;
         const model = document.getElementById('model').value;
         const systemPrompt = document.getElementById('systemPrompt').value;
@@ -187,7 +187,11 @@ ${JSON.stringify(memory, null, 2)}
             });
         } catch (e) {
             if (e.name === 'AbortError') {
-                this.log('Ошибка LLM: Превышено время ожидания (Timeout)');
+                this.log('Ошибка LLM: Превышено время ожидания (Timeout).');
+                if (retryCount < 1) {
+                    this.log('Повторная попытка запроса...');
+                    return await this.getLlmDecision(memory, retryCount + 1);
+                }
             } else {
                 this.log(`Ошибка LLM: ${e.message}`);
             }
