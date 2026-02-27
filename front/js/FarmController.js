@@ -89,7 +89,10 @@ class FarmBug {
                 });
             }
         } catch (e) {
-            if (e.name === 'AbortError' && retryCount < 1) return this.getLlmDecision(memory, retryCount + 1);
+            if ((e.name === 'AbortError' || e.message === 'Timeout reading response') && retryCount < 4) {
+                this.log(`Таймаут. Повторная попытка ${retryCount + 2}/5...`);
+                return this.getLlmDecision(memory, retryCount + 1);
+            }
             this.log(`Ошибка: ${e.message}`);
         }
     }

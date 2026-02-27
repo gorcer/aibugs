@@ -192,9 +192,9 @@ ${JSON.stringify(memory, null, 2)}
                 actions: plan
             });
         } catch (e) {
-            if (e.name === 'AbortError') {
-                this.log('Ошибка LLM: Превышено время ожидания (Timeout).');
-                if (retryCount < 1) {
+            if (e.name === 'AbortError' || e.message === 'Timeout reading response') {
+                this.log(`Ошибка LLM: Превышено время ожидания (Попытка ${retryCount + 1}/5).`);
+                if (retryCount < 4) {
                     this.log('Повторная попытка запроса...');
                     return await this.getLlmDecision(memory, retryCount + 1);
                 }
