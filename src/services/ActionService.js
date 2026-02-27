@@ -25,6 +25,7 @@ class ActionService {
         }));
         
         bug.lastActionTurn = initTurnN;
+        bug.brainSleeping = bug.actionQueue.length > 0;
     }
 
     /**
@@ -32,7 +33,12 @@ class ActionService {
      */
     processAllActions() {
         world.bugs.forEach(bug => {
-            if (!bug.is_live || bug.actionQueue.length === 0) return;
+            if (!bug.is_live) return;
+            
+            if (bug.actionQueue.length === 0) {
+                bug.brainSleeping = false;
+                return;
+            }
 
             const action = bug.actionQueue[0];
             this.executeAction(bug, action);
@@ -64,6 +70,7 @@ class ActionService {
         const cost = bug.energy_consumption_per_cell;
         if (bug.current_energy < cost) {
             bug.actionQueue.shift();
+            bug.brainSleeping = false;
             return;
         }
 
@@ -94,6 +101,7 @@ class ActionService {
                 action.status = 'Fail';
                 bug.lastActionResult = { actionId: action.actionId, status: 'Fail' };
                 bug.actionQueue.shift();
+                bug.brainSleeping = false;
             }
         }
     }
@@ -154,9 +162,11 @@ class ActionService {
             // Запись боли в память цели
             const relativeAngle = (bug.angle - target.angle + 180 + 360) % 360;
             target.lastPainAngle = relativeAngle;
+            target.brainSleeping = false; // Прерываем сон при укусе
             bug.lastActionResult = { actionId: action.actionId, status: 'OK' };
         } else {
             bug.lastActionResult = { actionId: action.actionId, status: 'Fail' };
+            bug.brainSleeping = false;
         }
         
         bug.actionQueue.shift();

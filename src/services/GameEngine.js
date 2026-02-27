@@ -71,7 +71,8 @@ class GameEngine {
                 turnN: world.currentTurn,
                 viewMap,
                 feeling,
-                lastAction: bug.lastActionResult || null
+                lastAction: bug.lastActionResult || null,
+                brainSleeping: bug.brainSleeping
             };
             bug.addMemory(memoryRecord);
             delete bug.lastActionResult;
