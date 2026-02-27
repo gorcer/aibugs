@@ -14,7 +14,7 @@ class Bug {
         this.max_speed = 1;
         this.rotate_speed = 90;
         this.max_energy = 100;
-        this.energy_consumption_per_cell = 2;
+        this.energy_consumption_per_cell = 1;
         this.energy_consumption_per_degree = 0.1;
         this.energy_consumption_per_turn = 1;
         this.speed_multiply_on_low_energy = 0.5;

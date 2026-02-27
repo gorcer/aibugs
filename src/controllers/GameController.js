@@ -66,7 +66,7 @@ class GameController {
         res.json({ status: 'deleted', uid: unitUid });
     }
 
-    getAllUnits(req, res) {
+    worldStat(req, res) {
         const totalBugs = world.bugs.size;
         let activityPercent = 0;
         
