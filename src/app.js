@@ -23,8 +23,12 @@ app.use('/api', gameRoutes);
 
 const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    socketService.init(server);
-    gameEngine.init();
-});
+if (process.env.NODE_ENV !== 'test') {
+    server.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+        socketService.init(server);
+        gameEngine.init();
+    });
+}
+
+module.exports = app;
