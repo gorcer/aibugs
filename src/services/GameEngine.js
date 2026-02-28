@@ -25,7 +25,7 @@ class GameEngine {
                 const remainingFood = world.feedAmount - currentTotalAmount;
                 const amount = i === world.feedCount - 1 ? remainingFood : Math.floor(Math.random() * (remainingFood / (world.feedCount - i)));
 
-                const uid = world.food.size;
+                const uid = world.food.length;
                 const food = new Food(uid, x, y, amount);
                 world.food.push(food);
                 world.grid[x][y] = food;
@@ -131,9 +131,10 @@ class GameEngine {
     }
 
     killBug(bug) {
+        if (!bug.is_live) return;
         bug.is_live = false;
         if (bug.weight > 0) {
-            const uid = world.food.size;
+            const uid = world.food.length;
             const food = new Food(uid, bug.x, bug.y, bug.weight, 2);
             world.grid[bug.x][bug.y] = food;
             world.food.push(food);
@@ -170,7 +171,7 @@ class GameEngine {
                 if (world.isCellEmpty(x, y)) {
                     const amount = Math.floor(caloriesToDistribute / (remainingToSpawn - i));
 
-                    const uid = world.food.size
+                    const uid = world.food.length;
                     const food = new Food(uid, x, y, amount);
                     world.food.push(food);
                     world.grid[x][y] = food;

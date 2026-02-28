@@ -151,7 +151,7 @@ class ActionService {
             bug.current_energy = Math.min(bug.max_energy, bug.current_energy + amount);
             if (target.amount <= 0) world.grid[targetX][targetY] = null;
             bug.lastActionResult = { actionId: action.actionId, status: 'OK' };
-        } else if (target && target.constructor.name === 'Bug') {
+        } else if (target && target.uid && target.uid.startsWith('b')) {
             const damage = bug.attack * bug.feed_speed;
             target.current_health -= damage;
             

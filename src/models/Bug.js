@@ -10,8 +10,8 @@ class Bug {
         this.y = y;
         this.angle = angle; // 0, 90, 180, 270
         
-        this.current_energy = 1000;
-        this.current_health = 1000;
+        this.current_energy = 100;
+        this.current_health = 100;
         this.faction = 1;
         this.max_speed = 1;
         this.rotate_speed = 90;

@@ -88,7 +88,7 @@ describe('AiBugs Memory and brainSleeping Tests', () => {
         const bug = world.bugs.get(bugUid);
 
         // Ставим еду, которой хватит на 1 укус
-        const uid = world.food.size();
+        const uid = world.food.length;
         const food = new Food(uid, 21, 20, 1);
         world.food.push(food);
         world.grid[21][20] = food;
