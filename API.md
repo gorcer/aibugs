@@ -139,6 +139,8 @@ Gets the current physical feelings of the bug.
   "feeling": [
     {"energy": 100},
     {"health": 100},
+    {"food_bites": 5},
+    {"bug_bites": 2},
     {"pain": 90},
     {"currentPlan": [
       { "actionId": 1, "payload": {} },
@@ -232,7 +234,9 @@ Returns information about all existing bugs, food objects, and current parameter
       "angle": 0,
       "is_live": true,
       "current_health": 100,
-      "current_energy": 100
+      "current_energy": 100,
+      "food_bites": 5,
+      "bug_bites": 2
     }
   ],
   "food": [

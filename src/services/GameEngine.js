@@ -121,6 +121,8 @@ class GameEngine {
         
         feelings.push({ energy: bug.current_energy });
         feelings.push({ health: bug.current_health });
+        feelings.push({ food_bites: bug.food_bites });
+        feelings.push({ bug_bites: bug.bug_bites });
         
         if (bug.lastPainAngle !== undefined) {
             feelings.push({ pain: bug.lastPainAngle });

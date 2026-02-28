@@ -151,6 +151,7 @@ class ActionService {
 
             bug.current_energy = Math.min(bug.max_energy, bug.current_energy + amount);
             if (target.amount <= 0) world.grid[targetX][targetY] = null;
+            bug.food_bites++;
             bug.lastActionResult = { actionId: action.actionId, status: 'OK' };
         } else if (target && target.uid && target.uid.startsWith('b')) {
             const damage = bug.attack * bug.feed_speed;
@@ -163,6 +164,7 @@ class ActionService {
             }
             
             bug.current_energy = Math.min(bug.max_energy, bug.current_energy + damage);
+            bug.bug_bites++;
             
             // Запись боли в память цели
             const relativeAngle = (bug.angle - target.angle + 180 + 360) % 360;

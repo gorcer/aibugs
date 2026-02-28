@@ -33,6 +33,8 @@ class Bug {
         this.memory_limit = 500;
         this.is_live = true;
         this.is_visible = true;
+        this.food_bites = 0;
+        this.bug_bites = 0;
         this.weight = 100;
         this.weight_increase_on_high_energy_per_turn = 1;
 
