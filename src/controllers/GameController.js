@@ -34,7 +34,10 @@ class GameController {
         if (!world.isCellEmpty(x, y)) {
             return res.status(400).json({ error: 'Cell is occupied or out of bounds' });
         }
-        const bug = new Bug(name, x, y, req.user.id, angle);
+
+
+        const uid = world.bugs.size+1;
+        const bug = new Bug(uid, name, x, y, req.user.id, angle);
         world.bugs.set(bug.uid, bug);
         world.grid[x][y] = bug;
         res.json({ uid: bug.uid });
@@ -104,6 +107,7 @@ class GameController {
         }
 
         const units = Array.from(world.bugs.values()).map(bug => ({
+            ownerId: bug.ownerId,
             uid: bug.uid,
             name: bug.name,
             x: bug.x,

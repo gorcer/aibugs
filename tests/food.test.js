@@ -41,7 +41,8 @@ describe('AiBugs Food Mechanics Tests', () => {
 
         // Создаем еду с малым количеством
         const foodX = 11, foodY = 10;
-        const smallFood = new Food(foodX, foodY, 5);
+        const uid = world.food.size;
+        const smallFood = new Food(uid, foodX, foodY, 5);
         world.food.push(smallFood);
         world.grid[foodX][foodY] = smallFood;
 

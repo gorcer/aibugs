@@ -15,9 +15,6 @@ app.get('/ai', (req, res) => {
     res.sendFile(path.join(__dirname, '../front/ai.html'));
 });
 
-app.get('/farm', (req, res) => {
-    res.sendFile(path.join(__dirname, '../front/farm.html'));
-});
 
 app.use('/api', gameRoutes);
 

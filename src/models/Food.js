@@ -1,8 +1,7 @@
-const crypto = require('crypto');
 
 class Food {
-    constructor(x, y, amount, type = 1) {
-        this.id = crypto.randomUUID();
+    constructor(uid, x, y, amount, type = 1) {
+        this.id = 'f'+uid;
         this.x = x;
         this.y = y;
         this.amount = amount;

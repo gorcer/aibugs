@@ -131,8 +131,8 @@ export class ViewRenderer {
         // исходный Y (бок) становится вертикалью (строки).
         const cells = [...(viewMap || []), { x: 0, y: 0, type: 'self' }].map(c => ({
             ...c,
-            tx: c.x, // Табличный X
-            ty: c.y  // Табличный Y
+            tx: c.y, // Табличный X
+            ty: c.x  // Табличный Y
         }));
 
         this.container.innerHTML = '';
