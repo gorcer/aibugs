@@ -19,7 +19,9 @@ class DbService {
         `);
     }
 
-    createUser(username, password, apiKey) {
+    async createUser(username, password, apiKey) {
+
+
         const stmt = this.db.prepare('INSERT INTO users (username, password, api_key) VALUES (?, ?, ?)');
         return stmt.run(username, password, apiKey);
     }
@@ -33,7 +35,7 @@ class DbService {
     }
 
     clearUsers() {
-        this.db.prepare('DELETE FROM users').run();
+        return this.db.prepare('DELETE FROM users').run();
     }
 }
 
