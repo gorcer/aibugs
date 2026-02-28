@@ -1,4 +1,6 @@
 private.txt
 .aider*
 node_modules
-.sqllite
+database.sqlite
+database_test.sqlite
+.sqlite

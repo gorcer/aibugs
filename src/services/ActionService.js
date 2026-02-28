@@ -47,6 +47,7 @@ class ActionService {
 
             // brainSleeping становится true только если в очереди осталось больше одного действия
             bug.brainSleeping = bug.actionQueue.length > 1;
+            bug.lastActivityTime = Date.now();
         });
     }
 
