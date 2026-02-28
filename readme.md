@@ -14,6 +14,7 @@
 - Тестирование: Jest, Supertest.
 - Frontend: Vanilla JS, WebSockets.
 
+
 ## Инструкция по запуску
 
 ### 1. Установка зависимостей
