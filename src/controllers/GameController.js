@@ -1,14 +1,29 @@
 const world = require('../models/World');
 const Bug = require('../models/Bug');
 const actionService = require('../services/ActionService');
+const dbService = require('../services/DbService');
+const crypto = require('crypto');
 
 class GameController {
+    register(req, res) {
+        const { username } = req.body;
+        if (!username) return res.status(400).json({ error: 'Username required' });
+        
+        const apiKey = crypto.randomBytes(16).toString('hex');
+        try {
+            dbService.createUser(username, apiKey);
+            res.json({ username, apiKey });
+        } catch (e) {
+            res.status(400).json({ error: 'Username already exists' });
+        }
+    }
+
     addUnit(req, res) {
         const { name, x, y, angle } = req.body;
         if (!world.isCellEmpty(x, y)) {
             return res.status(400).json({ error: 'Cell is occupied or out of bounds' });
         }
-        const bug = new Bug(name, x, y, angle);
+        const bug = new Bug(name, x, y, req.user.id, angle);
         world.bugs.set(bug.uid, bug);
         world.grid[x][y] = bug;
         res.json({ uid: bug.uid });
