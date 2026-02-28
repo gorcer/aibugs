@@ -3,7 +3,8 @@ const path = require('path');
 
 class DbService {
     constructor() {
-        const dbPath = path.join(__dirname, '../../database.sqlite');
+        const dbName = process.env.NODE_ENV === 'test' ? 'database_test.sqlite' : 'database.sqlite';
+        const dbPath = path.join(__dirname, '../../', dbName);
         this.db = new Database(dbPath);
         this.init();
     }
