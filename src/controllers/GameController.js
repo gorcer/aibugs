@@ -5,7 +5,7 @@ const dbService = require('../services/DbService');
 const crypto = require('crypto');
 
 class GameController {
-    register(req, res) {
+    register = (req, res) => {
         const { username, password } = req.body;
         if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
         
@@ -18,7 +18,7 @@ class GameController {
         }
     }
 
-    login(req, res) {
+    login = (req, res) => {
         const { username, password } = req.body;
         const user = dbService.getUserByUsername(username);
         
@@ -29,7 +29,7 @@ class GameController {
         res.json({ username: user.username, apiKey: user.api_key });
     }
 
-    addUnit(req, res) {
+    addUnit = (req, res) => {
         const { name, x, y, angle } = req.body;
         if (!world.isCellEmpty(x, y)) {
             return res.status(400).json({ error: 'Cell is occupied or out of bounds' });
@@ -40,7 +40,7 @@ class GameController {
         res.json({ uid: bug.uid });
     }
 
-    watch(req, res) {
+    watch = (req, res) => {
         const bug = world.bugs.get(req.params.unitUid);
         if (!bug) return res.status(404).json({ error: 'Bug not found' });
         
@@ -51,7 +51,7 @@ class GameController {
         });
     }
 
-    action(req, res) {
+    action = (req, res) => {
         const { unitUid } = req.params;
         const { initTourN, actions } = req.body;
         const bug = world.bugs.get(unitUid);
@@ -65,7 +65,7 @@ class GameController {
         }
     }
 
-    feel(req, res) {
+    feel = (req, res) => {
         const bug = world.bugs.get(req.params.unitUid);
         if (!bug) return res.status(404).json({ error: 'Bug not found' });
 
@@ -76,13 +76,13 @@ class GameController {
         });
     }
 
-    memory(req, res) {
+    memory = (req, res) => {
         const bug = world.bugs.get(req.params.unitUid);
         if (!bug) return res.status(404).json({ error: 'Bug not found' });
         res.json({ memory: bug.memory });
     }
 
-    deleteUnit(req, res) {
+    deleteUnit = (req, res) => {
         const { unitUid } = req.params;
         const bug = world.bugs.get(unitUid);
         if (!bug) return res.status(404).json({ error: 'Bug not found' });
@@ -92,7 +92,7 @@ class GameController {
         res.json({ status: 'deleted', uid: unitUid });
     }
 
-    worldStat(req, res) {
+    worldStat = (req, res) => {
         const totalBugs = world.bugs.size;
         let activityPercent = 0;
         

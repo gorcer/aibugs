@@ -21,7 +21,7 @@ describe('AiBugs Actions API Tests', () => {
         apiKey = reg.body.apiKey;
 
         const res = await request(app)
-            .post('/api/actions/addUnit')
+            .post('/api/addUnit')
             .set('x-api-key', apiKey)
             .send({ name: 'ActionBug', x: 30, y: 30, angle: 0 });
         unitUid = res.body.uid;
@@ -29,7 +29,7 @@ describe('AiBugs Actions API Tests', () => {
 
     test('POST /api/action/:unitUid - should queue an action plan', async () => {
         const response = await request(app)
-            .post(`/api/actions/action/${unitUid}`)
+            .post(`/api/action/${unitUid}`)
             .set('x-api-key', apiKey)
             .send({
                 initTourN: world.currentTurn + 1,
@@ -42,7 +42,7 @@ describe('AiBugs Actions API Tests', () => {
 
     test('POST /api/action/:unitUid - should return error if actions is not an array', async () => {
         const response = await request(app)
-            .post(`/api/actions/action/${unitUid}`)
+            .post(`/api/action/${unitUid}`)
             .set('x-api-key', apiKey)
             .send({
                 initTourN: world.currentTurn + 2,
