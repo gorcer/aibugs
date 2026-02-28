@@ -1,9 +1,10 @@
 const crypto = require('crypto');
 
 class Bug {
-    constructor(name, x, y, angle = 0) {
-        this.uid = crypto.randomUUID();
+    constructor(name, x, y, ownerId, angle = 0) {
+        this.uid = world.getNextId();
         this.name = name;
+        this.ownerId = ownerId;
         this.x = x;
         this.y = y;
         this.angle = angle; // 0, 90, 180, 270
