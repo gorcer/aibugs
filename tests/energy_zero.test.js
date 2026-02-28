@@ -16,7 +16,7 @@ describe('Zero Energy Movement Test', () => {
         apiKey = res.body.apiKey;
     });
 
-    test('Bug with 0 energy and 40% health should not move and fail the plan', async () => {
+    test('Bug with 0 energy and 40% health should move slowly and reach target', async () => {
         // 1. Создаем жука в точке (5, 5)
         const createRes = await request(app)
             .post('/api/addUnit')
@@ -43,21 +43,14 @@ describe('Zero Energy Movement Test', () => {
             .send({ initTourN: world.currentTurn, actions: plan });
 
         // 4. Выполняем обработку действий (имитируем тики)
-        // Первый шаг должен провалиться из-за нехватки энергии
-        actionService.processAllActions();
+        // При 0 энергии speedMultiplier = 0.5. 3 шага * 2 тика = 6 вызовов processAllActions
+        for (let i = 0; i < 6; i++) {
+            actionService.processAllActions();
+        }
         
-        // Проверяем, что жук остался на месте (5, 5)
-        expect(bug.x).toBe(5);
+        // Проверяем, что жук добрался до (8, 5)
+        expect(bug.x).toBe(8);
         expect(bug.y).toBe(5);
-        expect(bug.lastActionResult.status).toBe('Fail');
-        expect(bug.lastActionResult.reason).toBe('Low energy');
-
-        // Последующие тики также не должны привести к движению, 
-        // так как первый Fail в ActionService.js сбрасывает brainSleeping и останавливает выполнение,
-        // но в текущей реализации он просто переходит к следующему действию в очереди или останавливается.
-        actionService.processAllActions();
-        actionService.processAllActions();
-
-        expect(bug.x).toBe(5);
+        expect(bug.actionQueue.length).toBe(0);
     });
 });
