@@ -79,14 +79,6 @@ class ActionService {
         action.progress += effectiveSpeed;
 
         if (action.progress >= 1) {
-            if (bug.current_energy < cost) {
-                action.status = 'Fail';
-                bug.lastActionResult = { actionId: action.actionId, status: 'Fail', reason: 'Low energy' };
-                bug.actionQueue.shift();
-                bug.brainSleeping = false;
-                return;
-            }
-
             let nextX = bug.x;
             let nextY = bug.y;
 
