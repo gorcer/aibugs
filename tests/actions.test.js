@@ -3,6 +3,7 @@ const express = require('express');
 const gameRoutes = require('../src/routes/gameRoutes');
 const world = require('../src/models/World');
 const ACTIONS = require('../src/constants/Actions');
+const dbService = require('../src/services/DbService');
 
 const app = express();
 app.use(express.json());
@@ -13,8 +14,9 @@ describe('AiBugs Actions API Tests', () => {
     let apiKey;
 
     beforeAll(async () => {
+        dbService.clearUsers();
         const reg = await request(app)
-            .post('/api/actions/register')
+            .post('/api/register')
             .send({ username: 'actionUser', password: 'password' });
         apiKey = reg.body.apiKey;
 

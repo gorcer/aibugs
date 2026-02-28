@@ -5,6 +5,7 @@ const world = require('../src/models/World');
 const gameEngine = require('../src/services/GameEngine');
 const ACTIONS = require('../src/constants/Actions');
 const Food = require('../src/models/Food');
+const dbService = require('../src/services/DbService');
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,7 @@ describe('AiBugs Memory and brainSleeping Tests', () => {
     let apiKey;
 
     beforeAll(async () => {
+        dbService.clearUsers();
         const res = await request(app)
             .post('/api/register')
             .send({ username: 'memoryUser', password: 'password' });

@@ -31,6 +31,10 @@ class DbService {
     getUserByUsername(username) {
         return this.db.prepare('SELECT * FROM users WHERE username = ?').get(username);
     }
+
+    clearUsers() {
+        this.db.prepare('DELETE FROM users').run();
+    }
 }
 
 module.exports = new DbService();

@@ -4,6 +4,7 @@ const gameRoutes = require('../src/routes/gameRoutes');
 const world = require('../src/models/World');
 const gameEngine = require('../src/services/GameEngine');
 const ACTIONS = require('../src/constants/Actions');
+const dbService = require('../src/services/DbService');
 
 const app = express();
 app.use(express.json());
@@ -13,6 +14,7 @@ describe('AiBugs Movement Mechanics Tests', () => {
     let apiKey;
 
     beforeAll(async () => {
+        dbService.clearUsers();
         const res = await request(app)
             .post('/api/register')
             .send({ username: 'moveUser', password: 'password' });

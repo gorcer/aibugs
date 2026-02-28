@@ -2,6 +2,7 @@ const request = require('supertest');
 const express = require('express');
 const gameRoutes = require('../src/routes/gameRoutes');
 const world = require('../src/models/World');
+const dbService = require('../src/services/DbService');
 
 const app = express();
 app.use(express.json());
@@ -12,6 +13,7 @@ describe('AiBugs Base API Tests', () => {
     let apiKey;
 
     beforeAll(async () => {
+        dbService.clearUsers();
         const res = await request(app)
             .post('/api/register')
             .send({ username: 'baseUser', password: 'password' });

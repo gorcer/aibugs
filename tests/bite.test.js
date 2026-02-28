@@ -5,6 +5,7 @@ const world = require('../src/models/World');
 const actionService = require('../src/services/ActionService');
 const gameEngine = require('../src/services/GameEngine');
 const ACTIONS = require('../src/constants/Actions');
+const dbService = require('../src/services/DbService');
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,7 @@ describe('AiBugs Bite Interaction Tests', () => {
     let apiKey;
 
     beforeAll(async () => {
+        dbService.clearUsers();
         const res = await request(app)
             .post('/api/register')
             .send({ username: 'biteUser', password: 'password' });
