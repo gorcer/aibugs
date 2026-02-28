@@ -1,3 +1,3 @@
 
-export OPENROUTER_API_KEY=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
+export OPENROUTER_API_KEY=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
 aider --model openrouter/google/gemini-3-flash-preview
