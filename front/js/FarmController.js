@@ -99,6 +99,8 @@ class FarmBug {
             if (decision.experience) {
                 this.log(" New experience: " + decision.experience);
                 this.experience = decision.experience;
+                // Вызываем сохранение через контроллер, если нужно сохранять опыт в реальном времени
+                // В данном контексте проще добавить метод сохранения в FarmBug или передать коллбек
             }
             if (decision.mood) {
                 this.mood = decision.mood;
@@ -151,8 +153,35 @@ class FarmController {
         });
         
         this.updateUserBlock();
+        this.restoreBugs();
         setInterval(() => this.refreshList(), 2000);
         this.refreshList();
+    }
+
+    saveBugs() {
+        const data = Array.from(this.bugs.values()).map(b => ({
+            uid: b.uid,
+            name: b.name,
+            config: b.config,
+            experience: b.experience
+        }));
+        localStorage.setItem('activeBugs', JSON.stringify(data));
+    }
+
+    restoreBugs() {
+        const saved = localStorage.getItem('activeBugs');
+        if (saved) {
+            try {
+                const bugConfigs = JSON.parse(saved);
+                bugConfigs.forEach(c => {
+                    const farmBug = new FarmBug(c.uid, c.name, c.config, this.api, (uid, msg) => console.log(uid, msg));
+                    farmBug.experience = c.experience;
+                    this.bugs.set(c.uid, farmBug);
+                });
+            } catch (e) {
+                console.error('Failed to restore bugs', e);
+            }
+        }
     }
 
     async handleLogin() {
@@ -210,6 +239,7 @@ class FarmController {
 
             const farmBug = new FarmBug(result.uid, bugData.name, config, this.api, (uid, msg) => console.log(uid, msg));
             this.bugs.set(result.uid, farmBug);
+            this.saveBugs();
             document.getElementById('addForm').style.display = 'none';
         } catch (e) {
             alert(e.message);
@@ -321,6 +351,7 @@ class FarmController {
             if (bug) {
                 bug.destroy();
                 this.bugs.delete(uid);
+                this.saveBugs();
             }
             this.refreshList();
         }
