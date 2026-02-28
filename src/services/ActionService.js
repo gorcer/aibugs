@@ -110,11 +110,6 @@ class ActionService {
         const targetRotation = action.payload.angle || 90; // +90 или -90
         const absRotation = Math.abs(targetRotation);
         const cost = absRotation * bug.energy_consumption_per_degree;
-        
-        if (bug.current_energy < cost) {
-            bug.actionQueue.shift();
-            return;
-        }
 
         // Скорость поворота с учетом мультипликатора (градусов за ход)
         const effectiveRotateSpeed = bug.rotate_speed * multiplier;
