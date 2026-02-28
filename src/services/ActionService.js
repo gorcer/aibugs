@@ -25,6 +25,7 @@ class ActionService {
         }));
         
         bug.lastActionTurn = initTurnN;
+        bug.lastActivityTime = Date.now();
         // brainSleeping становится true, если в плане больше одного действия
         bug.brainSleeping = bug.actionQueue.length > 1;
     }

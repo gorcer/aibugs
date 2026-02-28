@@ -40,6 +40,7 @@ class Bug {
         this.actionQueue = [];
         this.lastActionTurn = -1;
         this.brainSleeping = false;
+        this.lastActivityTime = Date.now();
     }
 
     addMemory(record) {

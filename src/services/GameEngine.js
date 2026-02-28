@@ -82,10 +82,19 @@ class GameEngine {
             bug.age++;
         });
 
-        // Проверка смерти после всех обновлений
+        // Проверка смерти и бездействия после всех обновлений
+        const now = Date.now();
+        const INACTIVITY_LIMIT = 3 * 60 * 1000; // 3 минуты
+
         world.bugs.forEach(bug => {
-            if (bug.is_live && (bug.current_health <= 0 || bug.weight <= 0)) {
+            if (!bug.is_live) return;
+
+            if (bug.current_health <= 0 || bug.weight <= 0) {
                 this.killBug(bug);
+            } else if (bug.actionQueue.length === 0 && (now - bug.lastActivityTime) > INACTIVITY_LIMIT) {
+                socketService.sendUpdate(bug.uid, { event: 'kicked', reason: 'Inactivity timeout (3 min)' });
+                this.killBug(bug);
+                world.bugs.delete(bug.uid);
             }
         });
 
