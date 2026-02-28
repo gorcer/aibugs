@@ -309,7 +309,7 @@ class FarmController {
                 </div>
                 <div class="bar-container"><div class="bar health-bar" style="width:${healthPct}%"></div><div class="bar-text">HP: ${healthPct}%</div></div>
                 <div class="bar-container"><div class="bar energy-bar" style="width:${energyPct}%"></div><div class="bar-text">EN: ${u.current_energy}</div></div>
-                <div style="grid-column: span 2; display: flex; gap: 15px; font-size: 0.9em; color: #555;">
+                <div style="grid-column: 1 / -1; display: flex; gap: 15px; font-size: 0.9em; color: #555; padding-top: 5px;">
                     <span>⏳ ${u.age || 0}</span>
                     <span>🍎 ${u.food_bites || 0}</span>
                     <span>⚔️ ${u.bug_bites || 0}</span>
