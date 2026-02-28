@@ -13,7 +13,29 @@
 **Запрос:**
 ```json
 {
-  "username": "player1"
+  "username": "player1",
+  "password": "securepassword"
+}
+```
+
+**Ответ:**
+```json
+{
+  "username": "player1",
+  "apiKey": "generated-hex-string"
+}
+```
+
+---
+
+### 0.1 Авторизация (Логин)
+`POST /login`
+
+**Запрос:**
+```json
+{
+  "username": "player1",
+  "password": "securepassword"
 }
 ```
 

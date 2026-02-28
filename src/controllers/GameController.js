@@ -6,16 +6,27 @@ const crypto = require('crypto');
 
 class GameController {
     register(req, res) {
-        const { username } = req.body;
-        if (!username) return res.status(400).json({ error: 'Username required' });
+        const { username, password } = req.body;
+        if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
         
         const apiKey = crypto.randomBytes(16).toString('hex');
         try {
-            dbService.createUser(username, apiKey);
+            dbService.createUser(username, password, apiKey);
             res.json({ username, apiKey });
         } catch (e) {
             res.status(400).json({ error: 'Username already exists' });
         }
+    }
+
+    login(req, res) {
+        const { username, password } = req.body;
+        const user = dbService.getUserByUsername(username);
+        
+        if (!user || user.password !== password) {
+            return res.status(401).json({ error: 'Invalid username or password' });
+        }
+        
+        res.json({ username: user.username, apiKey: user.api_key });
     }
 
     addUnit(req, res) {

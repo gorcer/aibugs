@@ -4,16 +4,17 @@ const gameController = require('../controllers/GameController');
 const auth = require('../middleware/auth');
 
 router.post('/register', gameController.register);
+router.post('/login', gameController.login);
 
 // Защищенные маршруты
 router.post('/addUnit', auth, gameController.addUnit);
-router.get('/watch/:unitUid', auth, gameController.watch);
 router.post('/action/:unitUid', auth, gameController.action);
-router.get('/feel/:unitUid', auth, gameController.feel);
-router.get('/memory/:unitUid', auth, gameController.memory);
 router.delete('/unit/:unitUid', auth, gameController.deleteUnit);
 
 // Публичные маршруты
+router.get('/watch/:unitUid', gameController.watch);
+router.get('/feel/:unitUid', gameController.feel);
+router.get('/memory/:unitUid', gameController.memory);
 router.get('/worldStat', gameController.worldStat);
 
 module.exports = router;

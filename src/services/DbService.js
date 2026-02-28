@@ -13,18 +13,23 @@ class DbService {
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT UNIQUE,
+                password TEXT,
                 api_key TEXT UNIQUE
             )
         `);
     }
 
-    createUser(username, apiKey) {
-        const stmt = this.db.prepare('INSERT INTO users (username, api_key) VALUES (?, ?)');
-        return stmt.run(username, apiKey);
+    createUser(username, password, apiKey) {
+        const stmt = this.db.prepare('INSERT INTO users (username, password, api_key) VALUES (?, ?, ?)');
+        return stmt.run(username, password, apiKey);
     }
 
     getUserByApiKey(apiKey) {
         return this.db.prepare('SELECT * FROM users WHERE api_key = ?').get(apiKey);
+    }
+
+    getUserByUsername(username) {
+        return this.db.prepare('SELECT * FROM users WHERE username = ?').get(username);
     }
 }
 
