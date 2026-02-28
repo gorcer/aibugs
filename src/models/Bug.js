@@ -1,8 +1,9 @@
 const crypto = require('crypto');
 
+
 class Bug {
-    constructor(name, x, y, ownerId, angle = 0) {
-        this.uid = world.getNextId();
+    constructor(id, name, x, y, ownerId, angle = 0) {
+        this.uid = 'b'+id;
         this.name = name;
         this.ownerId = ownerId;
         this.x = x;
