@@ -29,7 +29,7 @@ class AiController {
         const apiKey = document.getElementById('apiKey').value;
         const model = document.getElementById('model').value;
 
-        this.log(`Проверка доступности модели ${model}...`);
+        this.log(`Checking model availability ${model}...`);
         
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
@@ -47,19 +47,19 @@ class AiController {
 
         const result = await response.json();
         if (result.error) {
-            throw new Error(result.error.message || "Ошибка проверки модели");
+            throw new Error(result.error.message || "Model check error");
         }
-        this.log("Модель доступна.");
+        this.log("Model is available.");
         return true;
     }
 
     async start() {
-        if (!this.api.getApiKey()) return alert('Сначала войдите в систему (Login)');
+        if (!this.api.getApiKey()) return alert('Please login first');
         const apiKey = document.getElementById('apiKey').value;
-        if (!apiKey) return alert('Введите OpenRouter API Key');
+        if (!apiKey) return alert('Enter OpenRouter API Key');
 
         this.startBtn.disabled = true;
-        this.log('Запуск процесса...');
+        this.log('Starting process...');
 
         try {
             await this.checkModelAvailability();
@@ -77,14 +77,14 @@ class AiController {
             }
             this.currentUid = result.uid;
             document.getElementById('uid').innerText = this.currentUid;
-            document.getElementById('status').innerText = 'Активен';
+            document.getElementById('status').innerText = 'Active';
             document.getElementById('status').className = 'status-active';
 
             this.connectWebSocket(this.currentUid);
-            this.log(`Жук создан. UID: ${this.currentUid}`);
+            this.log(`Bug created. UID: ${this.currentUid}`);
         } catch (e) {
-            this.log(`Критическая ошибка: ${e.message}`);
-            document.getElementById('status').innerText = 'Ошибка запуска';
+            this.log(`Critical error: ${e.message}`);
+            document.getElementById('status').innerText = 'Start error';
             document.getElementById('status').className = '';
             this.startBtn.disabled = false;
         }
@@ -97,7 +97,7 @@ class AiController {
 
         this.socket.onmessage = async (event) => {
             if (this.isProcessing) {
-                console.log('Пропуск хода: предыдущий запрос к LLM еще выполняется');
+                console.log('Skipping turn: previous LLM request is still running');
                 return;
             }
 
@@ -106,12 +106,12 @@ class AiController {
             if (!lastState) return;
 
             if (lastState.brainSleeping) {
-                console.log(`Ход ${lastState.turnN}: Жук выполняет план (brainSleeping: true). Ждем.`);
+                console.log(`Turn ${lastState.turnN}: Bug is executing plan (brainSleeping: true). Waiting.`);
                 return;
             }
 
             this.lastTurnN = lastState.turnN;
-            this.log(`Ход ${lastState.turnN}. Анализ памяти (${memory.length} зап.). Запрос к LLM...`);
+            this.log(`Turn ${lastState.turnN}. Memory analysis (${memory.length} rec.). Requesting LLM...`);
             
             this.isProcessing = true;
             try {
@@ -127,10 +127,10 @@ class AiController {
         const model = document.getElementById('model').value;
         const systemPrompt = document.getElementById('systemPrompt').value;
 
-        const userPrompt = `История твоей памяти (последние ходы):
+        const userPrompt = `Your memory history (last turns):
 ${JSON.stringify(memory, null, 2)}
 
-Проанализируй историю и текущее состояние. Твой ход.`;
+Analyze history and current state. Your turn.`;
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 30000); // Таймаут 30 секунд
@@ -183,11 +183,11 @@ ${JSON.stringify(memory, null, 2)}
 
             const decision = JSON.parse(content);
 
-            this.log(`LLM решила: ${decision.reason || content} (Cost: $${cost.toFixed(6)})`);
+            this.log(`LLM decided: ${decision.reason || content} (Cost: $${cost.toFixed(6)})`);
 
             const plan = decision.plan || [];
             if (plan.length === 0) {
-                this.log("План пуст: пропуск отправки на бэкенд.");
+                this.log("Plan is empty: skipping backend update.");
                 return;
             }
 
@@ -197,13 +197,13 @@ ${JSON.stringify(memory, null, 2)}
             });
         } catch (e) {
             if (e.name === 'AbortError' || e.message === 'Timeout reading response') {
-                this.log(`Ошибка LLM: Превышено время ожидания (Попытка ${retryCount + 1}/5).`);
+                this.log(`LLM Error: Timeout (Attempt ${retryCount + 1}/5).`);
                 if (retryCount < 10) {
-                    this.log('Повторная попытка запроса...');
+                    this.log('Retrying request...');
                     return await this.getLlmDecision(memory, retryCount + 1);
                 }
             } else {
-                this.log(`Ошибка LLM: ${e.message}`);
+                this.log(`LLM Error: ${e.message}`);
             }
         }
     }

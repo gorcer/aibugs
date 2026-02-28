@@ -99,14 +99,12 @@ class FarmBug {
             if (decision.experience) {
                 this.log(" New experience: " + decision.experience);
                 this.experience = decision.experience;
-                // Вызываем сохранение через контроллер, если нужно сохранять опыт в реальном времени
-                // В данном контексте проще добавить метод сохранения в FarmBug или передать коллбек
             }
             if (decision.mood) {
                 this.mood = decision.mood;
             }
 
-            this.log(`Решение: ${decision.reason || 'без описания'} (Cost: $${cost.toFixed(6)})`);
+            this.log(`Decision: ${decision.reason || 'no description'} (Cost: $${cost.toFixed(6)})`);
 
             if (decision.plan && decision.plan.length > 0) {
                 await this.api.sendAction(this.uid, {
@@ -116,10 +114,10 @@ class FarmBug {
             }
         } catch (e) {
             if ((e.name === 'AbortError' || e.message === 'Timeout reading response') && retryCount < 4) {
-                this.log(`Таймаут. Повторная попытка ${retryCount + 2}/5...`);
+                this.log(`Timeout. Retrying ${retryCount + 2}/5...`);
                 return this.getLlmDecision(memory, retryCount + 1);
             }
-            this.log(`Ошибка: ${e.message}`);
+            this.log(`Error: ${e.message}`);
         }
     }
 
@@ -193,7 +191,7 @@ class FarmController {
             localStorage.setItem('username', res.username);
             location.reload();
         } else {
-            alert('Ошибка входа');
+            alert('Login error');
         }
     }
 
@@ -206,7 +204,7 @@ class FarmController {
             localStorage.setItem('username', res.username);
             location.reload();
         } else {
-            alert('Ошибка регистрации');
+            alert('Registration error');
         }
     }
 
@@ -214,7 +212,7 @@ class FarmController {
         const username = localStorage.getItem('username');
         if (username) {
             document.getElementById('userBlock').innerHTML = `
-                <span>Привет, <strong>${username}</strong></span>
+                <span>Hello, <strong>${username}</strong></span>
                 <button onclick="localStorage.clear(); location.reload();">Logout</button>
             `;
         }
@@ -309,11 +307,11 @@ class FarmController {
                     <div style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 1px solid #999;"></div>
                     <div><strong>${u.name} ${bug?.mood || ''}</strong><br><small>LLM: ${avgTime}s | $${bug?.totalCost.toFixed(6) || '0.000000'}</small></div>
                 </div>
-                <div>Возраст: ${u.age || '?'}</div>
+                <div>Age: ${u.age || '?'}</div>
                 <div class="bar-container"><div class="bar health-bar" style="width:${healthPct}%"></div><div class="bar-text">HP: ${healthPct}%</div></div>
                 <div class="bar-container"><div class="bar energy-bar" style="width:${energyPct}%"></div><div class="bar-text">EN: ${u.current_energy}</div></div>
-                <button class="btn-log" data-uid="${u.uid}">Лог</button>
-                <button class="btn-del" data-uid="${u.uid}">Удалить</button>
+                <button class="btn-log" data-uid="${u.uid}">Log</button>
+                <button class="btn-del" data-uid="${u.uid}">Delete</button>
             `;
 
             card.querySelector('.btn-log').onclick = () => this.showLog(u.uid);
@@ -329,8 +327,8 @@ class FarmController {
         const expContent = document.getElementById('experienceContent');
         const viewGridContainer = document.getElementById('bugViewGrid');
 
-        logContent.innerText = bug ? bug.logs.join('\n') : 'Лог пуст или AI не запущен для этого жука в этой сессии';
-        expContent.innerText = (bug && bug.experience) ? bug.experience : 'Пока нет накопленного опыта...';
+        logContent.innerText = bug ? bug.logs.join('\n') : 'Log is empty or AI is not running for this bug in this session';
+        expContent.innerText = (bug && bug.experience) ? bug.experience : 'No experience accumulated yet...';
 
         if (bug && bug.lastMemory && bug.lastMemory.viewMap) {
             // Используем существующий ViewRenderer для отрисовки сетки зрения
@@ -338,14 +336,14 @@ class FarmController {
             const tempRenderer = new ViewRenderer('bugViewGrid');
             tempRenderer.renderGrid(bug.lastMemory.viewMap);
         } else {
-            viewGridContainer.innerHTML = 'Нет данных о зрении';
+            viewGridContainer.innerHTML = 'No vision data';
         }
 
         document.getElementById('logModal').style.display = 'block';
     }
 
     async deleteBug(uid) {
-        if (confirm('Удалить жука?')) {
+        if (confirm('Delete bug?')) {
             await this.api.deleteUnit(uid);
             const bug = this.bugs.get(uid);
             if (bug) {

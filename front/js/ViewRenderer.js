@@ -18,7 +18,7 @@ export class ViewRenderer {
         const hasFood = food && food.length > 0;
 
         if (!hasUnits && !hasFood) {
-            document.getElementById('worldMapContainer').innerHTML = 'Мир пуст';
+            document.getElementById('worldMapContainer').innerHTML = 'World is empty';
             return;
         }
 
@@ -90,9 +90,9 @@ export class ViewRenderer {
         const container = document.getElementById(containerId);
         container.innerHTML = `
             <ul style="list-style: none; padding: 0;">
-                <li><strong>Тип:</strong> Еда</li>
-                <li><strong>Координаты:</strong> X: ${food.x}, Y: ${food.y}</li>
-                <li><strong>Количество:</strong> ${food.amount}</li>
+                <li><strong>Type:</strong> Food</li>
+                <li><strong>Coordinates:</strong> X: ${food.x}, Y: ${food.y}</li>
+                <li><strong>Amount:</strong> ${food.amount}</li>
             </ul>
         `;
     }
@@ -100,7 +100,7 @@ export class ViewRenderer {
     renderUnitParams(containerId, unit) {
         const container = document.getElementById(containerId);
         if (!unit) {
-            container.innerHTML = 'Данные отсутствуют';
+            container.innerHTML = 'No data';
             return;
         }
 
@@ -109,12 +109,12 @@ export class ViewRenderer {
         list.style.padding = '0';
 
         const params = {
-            'Имя': unit.name,
-            'Координаты': `X: ${unit.x}, Y: ${unit.y}`,
-            'Угол': unit.angle,
-            'Жив': unit.is_live ? 'Да' : 'Нет',
-            'Здоровье': unit.current_health,
-            'Энергия': unit.current_energy
+            'Name': unit.name,
+            'Coordinates': `X: ${unit.x}, Y: ${unit.y}`,
+            'Angle': unit.angle,
+            'Alive': unit.is_live ? 'Yes' : 'No',
+            'Health': unit.current_health,
+            'Energy': unit.current_energy
         };
 
         for (const [label, value] of Object.entries(params)) {
@@ -127,12 +127,10 @@ export class ViewRenderer {
     }
 
     renderGrid(viewMap) {
-        // Поворачиваем сетку: исходный X (вперед) становится горизонталью (колонки),
-        // исходный Y (бок) становится вертикалью (строки).
         const cells = [...(viewMap || []), { x: 0, y: 0, type: 'self' }].map(c => ({
             ...c,
-            tx: c.y, // Табличный X
-            ty: c.x  // Табличный Y
+            tx: c.y, // Table X
+            ty: c.x  // Table Y
         }));
 
         this.container.innerHTML = '';
@@ -152,7 +150,7 @@ export class ViewRenderer {
                 if (cell) {
                     if (cell.type === 'self') {
                         td.className = 'current-bug';
-                        td.innerText = 'Я';
+                        td.innerText = 'Me';
                     } else {
                         td.className = `type-${cell.type}`;
                         td.innerText = cell.type === 1 ? 'F' : (cell.type === 2 ? 'B' : '');
@@ -168,7 +166,7 @@ export class ViewRenderer {
 
     renderStatus(containerId, data) {
         const container = document.getElementById(containerId);
-        container.innerHTML = `<h4>Ход: ${data.turnN}</h4>`;
+        container.innerHTML = `<h4>Turn: ${data.turnN}</h4>`;
         data.feeling.forEach(f => {
             const p = document.createElement('p');
             p.textContent = JSON.stringify(f);
@@ -181,7 +179,7 @@ export class ViewRenderer {
         container.innerHTML = '';
         [...memory].reverse().forEach(entry => {
             const item = document.createElement('div');
-            item.innerHTML = `<strong>Ход ${entry.turnN}</strong><pre>${JSON.stringify(entry.feeling, null, 2)}</pre>`;
+            item.innerHTML = `<strong>Turn ${entry.turnN}</strong><pre>${JSON.stringify(entry.feeling, null, 2)}</pre>`;
             container.appendChild(item);
         });
     }
