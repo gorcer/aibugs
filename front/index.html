@@ -31,9 +31,37 @@
     </style>
 </head>
 <body>
+    <div id="authHeader" style="background: #333; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div id="userBlock">
+            <button onclick="document.getElementById('loginModal').style.display='block'">Login</button>
+            <button onclick="document.getElementById('registerModal').style.display='block'">Sign Up</button>
+        </div>
+    </div>
+
     <div class="header">
         <h1>Жучиная ферма</h1>
-        <button class="btn-add" onclick="document.getElementById('addForm').style.display='block'">+ Добавить жука</button>
+        <button class="btn-add" id="addBugBtn">+ Добавить жука</button>
+    </div>
+
+    <!-- Auth Modals -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content" style="width: 300px;">
+            <h3>Вход</h3>
+            <input type="text" id="loginUser" placeholder="Username" style="margin-bottom: 10px;">
+            <input type="password" id="loginPass" placeholder="Password" style="margin-bottom: 10px;">
+            <button class="btn-add" id="doLogin">Войти</button>
+            <button onclick="document.getElementById('loginModal').style.display='none'">Отмена</button>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content" style="width: 300px;">
+            <h3>Регистрация</h3>
+            <input type="text" id="regUser" placeholder="Username" style="margin-bottom: 10px;">
+            <input type="password" id="regPass" placeholder="Password" style="margin-bottom: 10px;">
+            <button class="btn-add" id="doRegister">Создать аккаунт</button>
+            <button onclick="document.getElementById('registerModal').style.display='none'">Отмена</button>
+        </div>
     </div>
 
     <div id="addForm" class="form-container">

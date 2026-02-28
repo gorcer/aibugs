@@ -99,6 +99,7 @@ class App {
     }
 
     async addUnit() {
+        if (!this.api.getApiKey()) return alert('Необходима авторизация');
         const data = {
             name: document.getElementById('name').value,
             x: parseInt(document.getElementById('x').value),

@@ -54,8 +54,9 @@ class AiController {
     }
 
     async start() {
+        if (!this.api.getApiKey()) return alert('Сначала войдите в систему (Login)');
         const apiKey = document.getElementById('apiKey').value;
-        if (!apiKey) return alert('Введите API Key');
+        if (!apiKey) return alert('Введите OpenRouter API Key');
 
         this.startBtn.disabled = true;
         this.log('Запуск процесса...');

@@ -136,11 +136,59 @@ class FarmController {
 
     async init() {
         document.getElementById('confirmAdd').addEventListener('click', () => this.addBug());
+        document.getElementById('addBugBtn').addEventListener('click', () => {
+            if (!this.api.getApiKey()) {
+                document.getElementById('loginModal').style.display = 'block';
+            } else {
+                document.getElementById('addForm').style.display = 'block';
+            }
+        });
+        document.getElementById('doLogin').addEventListener('click', () => this.handleLogin());
+        document.getElementById('doRegister').addEventListener('click', () => this.handleRegister());
+        
         document.getElementById('model').addEventListener('input', (e) => {
             document.getElementById('name').value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
         });
+        
+        this.updateUserBlock();
         setInterval(() => this.refreshList(), 2000);
         this.refreshList();
+    }
+
+    async handleLogin() {
+        const user = document.getElementById('loginUser').value;
+        const pass = document.getElementById('loginPass').value;
+        const res = await this.api.login(user, pass);
+        if (res.apiKey) {
+            localStorage.setItem('apiKey', res.apiKey);
+            localStorage.setItem('username', res.username);
+            location.reload();
+        } else {
+            alert('Ошибка входа');
+        }
+    }
+
+    async handleRegister() {
+        const user = document.getElementById('regUser').value;
+        const pass = document.getElementById('regPass').value;
+        const res = await this.api.register(user, pass);
+        if (res.apiKey) {
+            localStorage.setItem('apiKey', res.apiKey);
+            localStorage.setItem('username', res.username);
+            location.reload();
+        } else {
+            alert('Ошибка регистрации');
+        }
+    }
+
+    updateUserBlock() {
+        const username = localStorage.getItem('username');
+        if (username) {
+            document.getElementById('userBlock').innerHTML = `
+                <span>Привет, <strong>${username}</strong></span>
+                <button onclick="localStorage.clear(); location.reload();">Logout</button>
+            `;
+        }
     }
 
     async addBug() {
@@ -205,7 +253,13 @@ class FarmController {
         const container = document.getElementById('bugList');
         container.innerHTML = '';
 
+        // Показываем только жуков текущего пользователя
+        const myUnits = data.units.filter(u => this.bugs.has(u.uid) || u.ownerId); // В идеале бэкенд должен возвращать ownerId
+
         data.units.forEach(u => {
+            // Если мы не знаем об этом жуке в текущей сессии и нет признака владения - пропускаем в списке управления
+            if (!this.bugs.has(u.uid)) return;
+
             const card = document.createElement('div');
             card.className = 'bug-card';
 
