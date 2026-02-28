@@ -307,15 +307,21 @@ class FarmController {
                     <div style="width: 15px; height: 15px; border-radius: 50%; background: ${color}; border: 1px solid #999;"></div>
                     <div><strong>${u.name} ${bug?.mood || ''}</strong><br><small>LLM: ${avgTime}s | $${bug?.totalCost.toFixed(6) || '0.000000'}</small></div>
                 </div>
-                <div class="bar-container"><div class="bar health-bar" style="width:${healthPct}%"></div><div class="bar-text">HP: ${healthPct}%</div></div>
-                <div class="bar-container"><div class="bar energy-bar" style="width:${energyPct}%"></div><div class="bar-text">EN: ${u.current_energy}</div></div>
-                <div style="grid-column: 1 / -1; display: flex; gap: 15px; font-size: 0.9em; color: #555; padding-top: 5px;">
-                    <span>⏳ ${u.age || 0}</span>
-                    <span>🍎 ${u.food_bites || 0}</span>
-                    <span>⚔️ ${u.bug_bites || 0}</span>
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <div style="display: flex; gap: 10px;">
+                        <div class="bar-container" style="flex: 1;"><div class="bar health-bar" style="width:${healthPct}%"></div><div class="bar-text">HP: ${healthPct}%</div></div>
+                        <div class="bar-container" style="flex: 1;"><div class="bar energy-bar" style="width:${energyPct}%"></div><div class="bar-text">EN: ${u.current_energy}</div></div>
+                    </div>
+                    <div style="display: flex; gap: 15px; font-size: 0.9em; color: #555;">
+                        <span>⏳ ${u.age || 0}</span>
+                        <span>🍎 ${u.food_bites || 0}</span>
+                        <span>⚔️ ${u.bug_bites || 0}</span>
+                    </div>
                 </div>
-                <button class="btn-log" data-uid="${u.uid}">Log</button>
-                <button class="btn-del" data-uid="${u.uid}">Delete</button>
+                <div style="display: flex; gap: 5px; justify-content: flex-end;">
+                    <button class="btn-log" data-uid="${u.uid}">Log</button>
+                    <button class="btn-del" data-uid="${u.uid}">Delete</button>
+                </div>
             `;
 
             card.querySelector('.btn-log').onclick = () => this.showLog(u.uid);
