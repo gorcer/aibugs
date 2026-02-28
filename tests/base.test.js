@@ -43,7 +43,9 @@ describe('AiBugs Base API Tests', () => {
             .send({ name: 'VisionBug', x: 5, y: 5, angle: 0 });
         const uid = addRes.body.uid;
 
-        const response = await request(app).get(`/api/watch/${uid}`);
+        const response = await request(app)
+            .get(`/api/watch/${uid}`)
+            .set('x-api-key', apiKey);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('viewMap');
         expect(Array.isArray(response.body.viewMap)).toBe(true);
