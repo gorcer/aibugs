@@ -73,17 +73,20 @@ class ActionService {
 
     handleMove(bug, action, multiplier) {
         const cost = bug.energy_consumption_per_cell;
-        if (bug.current_energy < cost) {
-            bug.actionQueue.shift();
-            bug.brainSleeping = false;
-            return;
-        }
 
         // Скорость с учетом мультипликатора (клеток за ход)
         const effectiveSpeed = bug.max_speed * multiplier;
         action.progress += effectiveSpeed;
 
         if (action.progress >= 1) {
+            if (bug.current_energy < cost) {
+                action.status = 'Fail';
+                bug.lastActionResult = { actionId: action.actionId, status: 'Fail', reason: 'Low energy' };
+                bug.actionQueue.shift();
+                bug.brainSleeping = false;
+                return;
+            }
+
             let nextX = bug.x;
             let nextY = bug.y;
 
