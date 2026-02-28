@@ -8,7 +8,7 @@ export class ApiService {
     }
 
     async register(username, password) {
-        const res = await fetch(`/register`, {
+        const res = await fetch(`${this.baseUrl}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -17,7 +17,7 @@ export class ApiService {
     }
 
     async login(username, password) {
-        const res = await fetch(`/login`, {
+        const res = await fetch(`${this.baseUrl}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
