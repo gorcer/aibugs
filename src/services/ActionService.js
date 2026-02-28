@@ -154,7 +154,6 @@ class ActionService {
         } else if (target && target.constructor.name === 'Bug') {
             const damage = bug.attack * bug.feed_speed;
             target.current_health -= damage;
-            target.weight -= damage;
             
             if (target.is_live && (target.current_health <= 0 || target.weight <= 0)) {
                 const gameEngine = require('./GameEngine');

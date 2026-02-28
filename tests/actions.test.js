@@ -7,7 +7,7 @@ const dbService = require('../src/services/DbService');
 
 const app = express();
 app.use(express.json());
-app.use('/api/actions', gameRoutes);
+app.use('/api', gameRoutes);
 
 describe('AiBugs Actions API Tests', () => {
     let unitUid;
