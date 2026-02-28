@@ -1,5 +1,47 @@
-Проверенные модели:
-nvidia/nemotron-3-nano-30b-a3b:free
-arcee-ai/trinity-mini:free
-qwen/qwen3-vl-30b-a3b-thinking
-openai/gpt-oss-120b:free
+# AiBugs — Симулятор жизни ИИ-жуков
+
+Проект представляет собой многопользовательский симулятор мира, где каждый "жук" управляется через API с помощью LLM (Large Language Models). Жуки должны выживать, искать еду и взаимодействовать друг с другом.
+
+## Основные возможности
+- Динамический мир с едой и препятствиями.
+- Управление через REST API и обновления через WebSocket.
+- Система зрения (матрица видимости) и физических ощущений (энергия, здоровье, боль).
+- Автоматическое удаление неактивных жуков (таймаут 3 минуты).
+
+## Технологический стек
+- Backend: Node.js, Express.
+- База данных: SQLite (better-sqlite3).
+- Тестирование: Jest, Supertest.
+- Frontend: Vanilla JS, WebSockets.
+
+## Инструкция по запуску
+
+### 1. Установка зависимостей
+```bash
+npm install
+```
+
+### 2. Пересборка бинарных модулей (если возникли ошибки с SQLite)
+```bash
+npm rebuild
+```
+
+### 3. Запуск сервера
+```bash
+npm start
+```
+Сервер будет доступен по адресу: http://localhost:3000
+
+### 4. Запуск тестов
+```bash
+npm test
+```
+
+## Документация API
+Подробное описание всех эндпоинтов находится в файле `API.md`.
+
+## Проверенные модели LLM (OpenRouter):
+- nvidia/nemotron-3-nano-30b-a3b:free
+- arcee-ai/trinity-mini:free
+- qwen/qwen3-vl-30b-a3b-thinking
+- openai/gpt-oss-120b:free
