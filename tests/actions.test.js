@@ -10,10 +10,17 @@ app.use('/api/actions', gameRoutes);
 
 describe('AiBugs Actions API Tests', () => {
     let unitUid;
+    let apiKey;
 
     beforeAll(async () => {
+        const reg = await request(app)
+            .post('/api/actions/register')
+            .send({ username: 'actionUser', password: 'password' });
+        apiKey = reg.body.apiKey;
+
         const res = await request(app)
             .post('/api/actions/addUnit')
+            .set('x-api-key', apiKey)
             .send({ name: 'ActionBug', x: 30, y: 30, angle: 0 });
         unitUid = res.body.uid;
     });
@@ -21,6 +28,7 @@ describe('AiBugs Actions API Tests', () => {
     test('POST /api/action/:unitUid - should queue an action plan', async () => {
         const response = await request(app)
             .post(`/api/actions/action/${unitUid}`)
+            .set('x-api-key', apiKey)
             .send({
                 initTourN: world.currentTurn + 1,
                 actions: [{ actionId: ACTIONS.MOVE, payload: {} }]
@@ -33,6 +41,7 @@ describe('AiBugs Actions API Tests', () => {
     test('POST /api/action/:unitUid - should return error if actions is not an array', async () => {
         const response = await request(app)
             .post(`/api/actions/action/${unitUid}`)
+            .set('x-api-key', apiKey)
             .send({
                 initTourN: world.currentTurn + 2,
                 actions: { actionId: ACTIONS.MOVE }

@@ -12,6 +12,15 @@ app.use(express.json());
 app.use('/api', gameRoutes);
 
 describe('AiBugs Food Mechanics Tests', () => {
+    let apiKey;
+
+    beforeAll(async () => {
+        const res = await request(app)
+            .post('/api/register')
+            .send({ username: 'foodUser', password: 'password' });
+        apiKey = res.body.apiKey;
+    });
+
     test('Food should disappear when eaten and new food should spawn', async () => {
         // 1. Подготовка: очищаем мир и ставим одну еду перед жуком
         world.food = [];
@@ -22,6 +31,7 @@ describe('AiBugs Food Mechanics Tests', () => {
 
         const res = await request(app)
             .post('/api/addUnit')
+            .set('x-api-key', apiKey)
             .send({ name: 'HungryBug', x: 10, y: 10, angle: 0 });
         const bugUid = res.body.uid;
         const bug = world.bugs.get(bugUid);
@@ -36,6 +46,7 @@ describe('AiBugs Food Mechanics Tests', () => {
         // 2. Жук кусает еду
         await request(app)
             .post(`/api/action/${bugUid}`)
+            .set('x-api-key', apiKey)
             .send({ initTourN: world.currentTurn, actions: [{ actionId: ACTIONS.BITE, payload: {} }] });
 
         // 3. Выполняем тик. Еда должна быть съедена и удалена, новая должна появиться

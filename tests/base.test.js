@@ -9,10 +9,19 @@ app.use('/api', gameRoutes);
 
 describe('AiBugs Base API Tests', () => {
     let unitUid;
+    let apiKey;
+
+    beforeAll(async () => {
+        const res = await request(app)
+            .post('/api/register')
+            .send({ username: 'baseUser', password: 'password' });
+        apiKey = res.body.apiKey;
+    });
 
     test('POST /api/addUnit - should add a new bug', async () => {
         const response = await request(app)
             .post('/api/addUnit')
+            .set('x-api-key', apiKey)
             .send({
                 name: 'TestBug',
                 x: 10,
@@ -28,6 +37,7 @@ describe('AiBugs Base API Tests', () => {
     test('GET /api/watch/:unitUid - should return vision data', async () => {
         const addRes = await request(app)
             .post('/api/addUnit')
+            .set('x-api-key', apiKey)
             .send({ name: 'VisionBug', x: 5, y: 5, angle: 0 });
         const uid = addRes.body.uid;
 

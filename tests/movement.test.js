@@ -10,12 +10,22 @@ app.use(express.json());
 app.use('/api', gameRoutes);
 
 describe('AiBugs Movement Mechanics Tests', () => {
+    let apiKey;
+
+    beforeAll(async () => {
+        const res = await request(app)
+            .post('/api/register')
+            .send({ username: 'moveUser', password: 'password' });
+        apiKey = res.body.apiKey;
+    });
+
     test('Bug with low energy should move slower (require multiple turns)', async () => {
         world.initGrid();
         gameEngine.isRunning = true;
 
         const res = await request(app)
             .post('/api/addUnit')
+            .set('x-api-key', apiKey)
             .send({ name: 'SlowBug', x: 10, y: 10, angle: 0 });
         const bugUid = res.body.uid;
         const bug = world.bugs.get(bugUid);
@@ -28,6 +38,7 @@ describe('AiBugs Movement Mechanics Tests', () => {
 
         await request(app)
             .post(`/api/action/${bugUid}`)
+            .set('x-api-key', apiKey)
             .send({ initTourN: world.currentTurn, actions: [{ actionId: ACTIONS.MOVE, payload: {} }] });
 
         const initialX = bug.x;

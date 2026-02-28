@@ -11,6 +11,15 @@ app.use(express.json());
 app.use('/api', gameRoutes);
 
 describe('AiBugs Bite Interaction Tests', () => {
+    let apiKey;
+
+    beforeAll(async () => {
+        const res = await request(app)
+            .post('/api/register')
+            .send({ username: 'biteUser', password: 'password' });
+        apiKey = res.body.apiKey;
+    });
+
     beforeEach(() => {
         world.initGrid();
         world.bugs.clear();
@@ -20,11 +29,13 @@ describe('AiBugs Bite Interaction Tests', () => {
     test('Bite action - should decrease victim health/weight and increase attacker energy', async () => {
         const attackerRes = await request(app)
             .post('/api/addUnit')
+            .set('x-api-key', apiKey)
             .send({ name: 'Attacker', x: 40, y: 40, angle: 0 });
         const attackerUid = attackerRes.body.uid;
 
         const victimRes = await request(app)
             .post('/api/addUnit')
+            .set('x-api-key', apiKey)
             .send({ name: 'Victim', x: 41, y: 40, angle: 180 });
         const victimUid = victimRes.body.uid;
 
@@ -38,6 +49,7 @@ describe('AiBugs Bite Interaction Tests', () => {
 
         await request(app)
             .post(`/api/action/${attackerUid}`)
+            .set('x-api-key', apiKey)
             .send({
                 initTourN: world.currentTurn,
                 actions: [{ actionId: ACTIONS.BITE, payload: {} }]
@@ -56,11 +68,13 @@ describe('AiBugs Bite Interaction Tests', () => {
         // 1. Создаем атакующего и жертву
         const attackerRes = await request(app)
             .post('/api/addUnit')
+            .set('x-api-key', apiKey)
             .send({ name: 'Killer', x: 50, y: 50, angle: 0 });
         const attackerUid = attackerRes.body.uid;
 
         const victimRes = await request(app)
             .post('/api/addUnit')
+            .set('x-api-key', apiKey)
             .send({ name: 'Prey', x: 51, y: 50, angle: 180 });
         const victimUid = victimRes.body.uid;
 
@@ -80,6 +94,7 @@ describe('AiBugs Bite Interaction Tests', () => {
         
         await request(app)
             .post(`/api/action/${attackerUid}`)
+            .set('x-api-key', apiKey)
             .send({ initTourN: currentTurn, actions: [{ actionId: ACTIONS.BITE, payload: {} }] });
 
         // 3. Проверяем смерть жертвы и превращение в еду
@@ -96,6 +111,7 @@ describe('AiBugs Bite Interaction Tests', () => {
         
         await request(app)
             .post(`/api/action/${attackerUid}`)
+            .set('x-api-key', apiKey)
             .send({ initTourN: world.currentTurn + 1, actions: [{ actionId: ACTIONS.BITE, payload: {} }] });
 
         actionService.processAllActions();

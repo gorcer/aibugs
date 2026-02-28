@@ -11,6 +11,15 @@ app.use(express.json());
 app.use('/api', gameRoutes);
 
 describe('AiBugs Memory and brainSleeping Tests', () => {
+    let apiKey;
+
+    beforeAll(async () => {
+        const res = await request(app)
+            .post('/api/register')
+            .send({ username: 'memoryUser', password: 'password' });
+        apiKey = res.body.apiKey;
+    });
+
     beforeEach(() => {
         world.initGrid();
         world.bugs.clear();
@@ -22,12 +31,14 @@ describe('AiBugs Memory and brainSleeping Tests', () => {
         // Создаем жука-жертву с планом на 3 хода
         const victimRes = await request(app)
             .post('/api/addUnit')
+            .set('x-api-key', apiKey)
             .send({ name: 'Victim', x: 10, y: 10, angle: 0 });
         const victimUid = victimRes.body.uid;
         const victimBug = world.bugs.get(victimUid);
 
         await request(app)
             .post(`/api/action/${victimUid}`)
+            .set('x-api-key', apiKey)
             .send({
                 initTourN: world.currentTurn,
                 actions: [
@@ -46,11 +57,13 @@ describe('AiBugs Memory and brainSleeping Tests', () => {
         // Создаем атакующего и кусаем жертву на 2-м ходу
         const attackerRes = await request(app)
             .post('/api/addUnit')
+            .set('x-api-key', apiKey)
             .send({ name: 'Attacker', x: victimBug.x + 1, y: victimBug.y, angle: 180 });
         const attackerUid = attackerRes.body.uid;
 
         await request(app)
             .post(`/api/action/${attackerUid}`)
+            .set('x-api-key', apiKey)
             .send({
                 initTourN: world.currentTurn,
                 actions: [{ actionId: ACTIONS.BITE, payload: {} }]
@@ -67,6 +80,7 @@ describe('AiBugs Memory and brainSleeping Tests', () => {
     test('2) brainSleeping should become false if bite target disappears (Fail status)', async () => {
         const bugRes = await request(app)
             .post('/api/addUnit')
+            .set('x-api-key', apiKey)
             .send({ name: 'HungryBug', x: 20, y: 20, angle: 0 });
         const bugUid = bugRes.body.uid;
         const bug = world.bugs.get(bugUid);
@@ -79,6 +93,7 @@ describe('AiBugs Memory and brainSleeping Tests', () => {
         // План: укусить 3 раза
         await request(app)
             .post(`/api/action/${bugUid}`)
+            .set('x-api-key', apiKey)
             .send({
                 initTourN: world.currentTurn,
                 actions: [
@@ -102,12 +117,14 @@ describe('AiBugs Memory and brainSleeping Tests', () => {
     test('3) brainSleeping should be true during plan and false after successful completion', async () => {
         const bugRes = await request(app)
             .post('/api/addUnit')
+            .set('x-api-key', apiKey)
             .send({ name: 'Walker', x: 30, y: 30, angle: 0 });
         const bugUid = bugRes.body.uid;
         const bug = world.bugs.get(bugUid);
 
         await request(app)
             .post(`/api/action/${bugUid}`)
+            .set('x-api-key', apiKey)
             .send({
                 initTourN: world.currentTurn,
                 actions: [
