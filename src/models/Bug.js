@@ -12,16 +12,16 @@ class Bug {
         this.is_active = true;
         
         this.current_energy = 1000;
-        this.current_health = 1000;
+        this.max_energy = 2000;
+        this.current_health = 2000;
+        this.max_health = 2000;
         this.faction = 1;
         this.max_speed = 1;
         this.rotate_speed = 90;
-        this.max_energy = 1000;
         this.energy_consumption_per_cell = 1;
         this.energy_consumption_per_degree = 0.1;
         this.energy_consumption_per_turn = 1;
         this.speed_multiply_on_low_energy = 1;
-        this.max_health = 1000;
         this.health_subtract_on_low_energy_per_turn = 1;
         this.health_increase_on_high_energy_per_turn = 1;
         this.energy_high_amount = 70; // %
