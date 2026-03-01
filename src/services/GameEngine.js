@@ -93,8 +93,7 @@ class GameEngine {
                 this.killBug(bug);
             } else if (bug.actionQueue.length === 0 && (now - bug.lastActivityTime) > INACTIVITY_LIMIT) {
                 socketService.sendUpdate(bug.uid, { event: 'kicked', reason: 'Inactivity timeout (3 min)' });
-                this.killBug(bug);
-                world.bugs.delete(bug.uid);
+                bug.is_active=false;
             }
         });
 
@@ -121,8 +120,6 @@ class GameEngine {
         
         feelings.push({ energy: bug.current_energy });
         feelings.push({ health: bug.current_health });
-        feelings.push({ food_bites: bug.food_bites });
-        feelings.push({ bug_bites: bug.bug_bites });
         
         if (bug.lastPainAngle !== undefined) {
             feelings.push({ pain: bug.lastPainAngle });
@@ -193,7 +190,10 @@ class GameEngine {
     }
 
     updateTurnTime() {
-        const totalBugs = world.bugs.size;
+        const totalBugs = Array.from(world.bugs.values()).filter(bug =>
+            bug.is_active
+        ).length;
+
         if (totalBugs > 0) {
             const activeBugs = Array.from(world.bugs.values()).filter(bug => 
                 bug.is_live && (bug.lastActionTurn === world.currentTurn || bug.actionQueue.length > 0)

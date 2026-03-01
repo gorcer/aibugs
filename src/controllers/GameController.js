@@ -115,6 +115,7 @@ class GameController {
             angle: bug.angle,
             age: bug.age,
             is_live: bug.is_live,
+            is_active: bug.is_active,
             current_health: 100 * (bug.current_health / bug.max_health),
             current_energy: 100 * (bug.current_energy / bug.max_energy),
             food_bites: bug.food_bites,

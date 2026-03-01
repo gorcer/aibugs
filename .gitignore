@@ -1,4 +1,4 @@
-private.txt
+/text/private.txt
 .aider*
 node_modules
 database.sqlite
