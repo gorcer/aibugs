@@ -60,18 +60,21 @@ export class ViewRenderer {
                 if (unit) {
                     td.className = 'type-2';
                     td.style.cursor = 'pointer';
-                    td.style.backgroundColor = unit.current_health <= 0 ? '#ccc' : this.getUnitColor(unit.uid);
-                    let arrow = '→';
-                    if (unit.angle === 90) arrow = '↓';
-                    else if (unit.angle === 180) arrow = '←';
-                    else if (unit.angle === 270) arrow = '↑';
-                    td.innerText = arrow;
+                    td.style.backgroundColor = this.getUnitColor(unit.uid);
+                    
+                    const img = document.createElement('img');
+                    img.src = unit.current_health <= 0 ? 'img/deadbug.png' : 'img/redbug.png';
+                    img.style.transform = `rotate(${unit.angle}deg)`;
+                    td.appendChild(img);
+
                     td.title = `${unit.name} (HP: ${unit.current_health})`;
                     td.onclick = () => onUnitClick(unit.uid);
                 } else if (foodItem) {
                     td.className = 'type-1';
-                    td.style.backgroundColor = '#90ee90';
-                    td.innerText = 'F';
+                    const img = document.createElement('img');
+                    img.src = 'img/berry.png';
+                    td.appendChild(img);
+                    
                     td.title = `Food: ${foodItem.amount}`;
                     td.style.cursor = 'pointer';
                     td.onclick = () => onFoodClick(foodItem);
@@ -148,12 +151,20 @@ export class ViewRenderer {
                 const cell = cells.find(c => c.tx === x && c.ty === y);
                 
                 if (cell) {
+                    const img = document.createElement('img');
                     if (cell.type === 'self') {
                         td.className = 'current-bug';
-                        td.innerText = 'Me';
+                        img.src = 'img/redbug.png';
+                        td.appendChild(img);
                     } else {
                         td.className = `type-${cell.type}`;
-                        td.innerText = cell.type === 1 ? 'F' : (cell.type === 2 ? 'B' : '');
+                        if (cell.type === 1) {
+                            img.src = 'img/berry.png';
+                            td.appendChild(img);
+                        } else if (cell.type === 2) {
+                            img.src = 'img/redbug.png';
+                            td.appendChild(img);
+                        }
                     }
                     td.title = `Rel X:${x} Y:${y}`;
                 }
